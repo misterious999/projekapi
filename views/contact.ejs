@@ -1,0 +1,54 @@
+<%- include('partials/head', { title, description, bodyClass }) %>
+<%- include('partials/nav') %>
+
+<main class="page-main">
+  <section class="page-hero">
+    <div class="container">
+      <span class="eyebrow">KONTAK</span>
+      <h1>Ada pertanyaan?<br><span class="text-gradient">Kami siap membantu.</span></h1>
+      <p>Kirim pesan lewat form, WhatsApp, atau buat tiket dari dashboard. Untuk masalah API, sertakan request ID agar lebih cepat dilacak.</p>
+    </div>
+  </section>
+
+  <section class="section section-tight">
+    <div class="container contact-layout">
+      <div class="contact-info">
+        <div class="glass-card contact-card">
+          <span class="feature-icon"><i data-lucide="message-circle"></i></span>
+          <h3>WhatsApp admin</h3>
+          <p>Jalur tercepat untuk pertanyaan order, aktivasi, dan kendala akun.</p>
+          <a class="btn btn-primary btn-block" href="https://wa.me/<%= (settings && settings.waAdmin) || app.waAdmin %>" target="_blank" rel="noopener">Chat sekarang <i data-lucide="arrow-up-right"></i></a>
+        </div>
+        <div class="glass-card contact-card">
+          <span class="feature-icon violet"><i data-lucide="mail"></i></span>
+          <h3>Email</h3>
+          <p>Untuk kerja sama, kontribusi, atau pertanyaan yang butuh lampiran.</p>
+          <a class="contact-email" href="mailto:<%= app.supportEmail %>"><%= app.supportEmail %></a>
+        </div>
+        <div class="glass-card contact-card">
+          <span class="feature-icon green"><i data-lucide="life-buoy"></i></span>
+          <h3>Tiket support</h3>
+          <p>Sudah punya akun? Buat tiket agar riwayat percakapan tersimpan.</p>
+          <a class="btn btn-ghost btn-block" href="/dashboard/tickets">Buka tiket</a>
+        </div>
+      </div>
+
+      <div class="glass-card contact-form-card">
+        <h2>Kirim pesan</h2>
+        <p>Kami biasanya membalas dalam 1×24 jam pada hari kerja.</p>
+        <form method="post" action="/contact" class="form">
+          <input type="hidden" name="_csrf" value="<%= csrf %>">
+          <div class="form-grid">
+            <label class="field"><span>Nama</span><input type="text" name="name" value="<%= form.name || '' %>" maxlength="80" required placeholder="Nama kamu"></label>
+            <label class="field"><span>Email</span><input type="email" name="email" value="<%= form.email || '' %>" maxlength="160" required placeholder="nama@email.com"></label>
+          </div>
+          <label class="field"><span>Subjek</span><input type="text" name="subject" value="<%= form.subject || '' %>" maxlength="160" required placeholder="Contoh: Kendala aktivasi paket"></label>
+          <label class="field"><span>Pesan</span><textarea name="message" rows="7" maxlength="4000" required placeholder="Tulis detail pertanyaan atau kendala kamu..."><%= form.message || '' %></textarea></label>
+          <button class="btn btn-primary" type="submit"><i data-lucide="send"></i> Kirim pesan</button>
+        </form>
+      </div>
+    </div>
+  </section>
+</main>
+
+<%- include('partials/footer', { scripts: [] }) %>

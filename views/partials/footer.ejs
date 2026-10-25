@@ -1,0 +1,56 @@
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <a class="brand" href="/">
+          <img src="/img/logo.svg" alt="" width="34" height="34">
+          <span class="brand-name">Nusa<strong>API</strong></span>
+        </a>
+        <p><%= app.tagline %> Platform API publik dengan dokumentasi lengkap, kuota transparan, dan monitoring layanan.</p>
+        <a class="status-pill" href="/monitor">
+          <span class="status-dot"></span>
+          <span>All systems operational</span>
+        </a>
+      </div>
+
+      <div class="footer-col">
+        <h4>Produk</h4>
+        <a href="/docs">Dokumentasi</a>
+        <a href="/pricing">Harga & paket</a>
+        <a href="/download">Download aplikasi</a>
+        <a href="/monitor">Status layanan</a>
+      </div>
+
+      <div class="footer-col">
+        <h4>Developer</h4>
+        <a href="/docs#ep-ai-chat">AI API</a>
+        <a href="/docs#ep-weather">Tools API</a>
+        <a href="/docs#ep-youtube-metadata">Downloader API</a>
+        <a href="/docs#ep-status">Health check</a>
+      </div>
+
+      <div class="footer-col">
+        <h4>Perusahaan</h4>
+        <a href="/contributor">Kontributor</a>
+        <a href="/contact">Kontak</a>
+        <a href="/terms">Syarat & ketentuan</a>
+        <a href="/privacy">Kebijakan privasi</a>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span>© <%= currentYear %> <%= app.name %>. Dibangun untuk developer Indonesia.</span>
+      <div class="footer-bottom-links">
+        <a href="/terms">Terms</a>
+        <a href="/privacy">Privacy</a>
+        <a href="https://wa.me/<%= (settings && settings.waAdmin) || app.waAdmin %>" target="_blank" rel="noopener">WhatsApp</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js" defer></script>
+  <script src="/js/main.js" defer></script>
+  <% (typeof scripts !== 'undefined' ? scripts : []).forEach(function (src) { %>
+    <script src="<%= src %>" defer></script>
+  <% }); %>
+</body>
+</html>

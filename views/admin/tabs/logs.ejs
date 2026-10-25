@@ -1,0 +1,56 @@
+<div class="admin-page-head">
+  <div>
+    <span class="eyebrow">LOG</span>
+    <h2>Jejak aktivitas.</h2>
+    <p>Log admin mencatat perubahan penting. Log API menampilkan request terakhir yang melewati server.</p>
+  </div>
+  <div class="admin-page-actions">
+    <a class="btn btn-ghost" href="/monitor"><i data-lucide="activity"></i> Monitor live</a>
+  </div>
+</div>
+
+<section class="admin-panel glass-card">
+  <div class="panel-head"><div><span class="eyebrow">ADMIN</span><h2>Aktivitas admin</h2></div><span class="badge badge-gray"><%= adminLogs.length %> entri</span></div>
+  <% if (adminLogs.length) { %>
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead><tr><th>Waktu</th><th>Admin</th><th>Aksi</th><th>Detail</th><th>Target</th></tr></thead>
+        <tbody>
+          <% adminLogs.forEach(function (log) { %>
+            <tr>
+              <td><span class="mono muted"><%= formatDateTime(log.createdAt) %></span></td>
+              <td><b>@<%= log.adminName %></b></td>
+              <td><code><%= log.action %></code></td>
+              <td><%= log.detail %></td>
+              <td><span class="mono muted"><%= log.target || '—' %></span></td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
+  <% } else { %><div class="empty-mini"><i data-lucide="scroll-text"></i><p>Belum ada aktivitas admin.</p></div><% } %>
+</section>
+
+<section class="admin-panel glass-card">
+  <div class="panel-head"><div><span class="eyebrow">API</span><h2>Request terakhir</h2></div><span class="badge badge-gray"><%= apiLogs.length %> entri</span></div>
+  <% if (apiLogs.length) { %>
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead><tr><th>Waktu</th><th>User</th><th>Endpoint</th><th>Status</th><th>Latency</th><th>IP</th><th>Request ID</th></tr></thead>
+        <tbody>
+          <% apiLogs.forEach(function (log) { %>
+            <tr>
+              <td><span class="mono muted"><%= formatDateTime(log.createdAt) %></span></td>
+              <td><b>@<%= log.username %></b><% if (log.keyType === 'freelimit') { %><span class="badge badge-amber">FreeLimit</span><% } %></td>
+              <td><code><%= log.endpointId %></code></td>
+              <td><span class="status-code <%= log.status < 300 ? 'ok' : (log.status < 500 ? 'warn' : 'bad') %>"><%= log.status %></span></td>
+              <td><%= log.ms %>ms</td>
+              <td><span class="mono muted"><%= log.ip || '-' %></span></td>
+              <td><span class="mono muted"><%= log.requestId || '—' %></span></td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
+  <% } else { %><div class="empty-mini"><i data-lucide="activity"></i><p>Belum ada request API.</p></div><% } %>
+</section>

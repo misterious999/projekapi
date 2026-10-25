@@ -1,0 +1,81 @@
+<%- include('partials/head', { title, description, bodyClass }) %>
+
+<main class="auth-main">
+  <div class="auth-glow auth-glow-a" aria-hidden="true"></div>
+  <div class="auth-glow auth-glow-b" aria-hidden="true"></div>
+
+  <div class="auth-shell auth-shell-register">
+    <section class="auth-aside">
+      <a class="brand" href="/">
+        <img src="/img/logo.svg" alt="" width="42" height="42">
+        <span class="brand-name">Nusa<strong>API</strong></span>
+      </a>
+      <h1>Gratis untuk mulai. <span class="text-gradient">Siap saat kamu siap.</span></h1>
+      <p>Akun baru langsung mendapat API key dan 100 request untuk mencoba semua endpoint dasar. Tanpa kartu kredit.</p>
+      <div class="onboarding-steps">
+        <div><span>1</span><div><b>Buat akun</b><small>Email, username, password.</small></div></div>
+        <div><span>2</span><div><b>API key otomatis</b><small>Langsung aktif setelah daftar.</small></div></div>
+        <div><span>3</span><div><b>Panggil endpoint</b><small>Copy contoh dari dokumentasi.</small></div></div>
+      </div>
+      <div class="auth-quote glass-card">
+        <p>“Dokumentasi yang baik menghemat satu jam debugging.”</p>
+        <span>— NusaAPI</span>
+      </div>
+    </section>
+
+    <section class="auth-card glass-card">
+      <div class="auth-head">
+        <span class="eyebrow">DAFTAR GRATIS</span>
+        <h2>Buat akun baru</h2>
+        <p>Sudah punya akun? <a href="/login">Masuk di sini</a>.</p>
+      </div>
+
+      <form method="post" action="/register" class="form auth-form" id="registerForm">
+        <input type="hidden" name="_csrf" value="<%= csrf %>">
+        <div class="form-grid">
+          <label class="field">
+            <span>Nama</span>
+            <div class="input-icon"><i data-lucide="user"></i><input type="text" name="name" maxlength="60" placeholder="Nama kamu" required></div>
+          </label>
+          <label class="field">
+            <span>Username</span>
+            <div class="input-icon"><i data-lucide="at-sign"></i><input type="text" name="username" pattern="[A-Za-z0-9_.\-]{3,24}" maxlength="24" placeholder="username" required></div>
+          </label>
+        </div>
+        <label class="field">
+          <span>Email</span>
+          <div class="input-icon"><i data-lucide="mail"></i><input type="email" name="email" autocomplete="email" placeholder="nama@email.com" required></div>
+        </label>
+        <div class="form-grid">
+          <label class="field">
+            <span>Password</span>
+            <div class="input-icon"><i data-lucide="lock"></i><input type="password" name="password" id="registerPassword" autocomplete="new-password" minlength="8" placeholder="Min. 8 karakter" required><button type="button" class="password-eye" data-toggle-password="registerPassword" aria-label="Lihat password"><i data-lucide="eye"></i></button></div>
+          </label>
+          <label class="field">
+            <span>Ulangi password</span>
+            <div class="input-icon"><i data-lucide="shield-check"></i><input type="password" name="confirm" id="registerConfirm" autocomplete="new-password" minlength="8" placeholder="Ulangi password" required></div>
+          </label>
+        </div>
+        <div class="password-meter" data-password-meter aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+        <label class="field">
+          <span>Kode referral <small>(opsional)</small></span>
+          <div class="input-icon"><i data-lucide="gift"></i><input type="text" name="ref" value="<%= ref || '' %>" maxlength="20" placeholder="Contoh: NUSAAB12" style="text-transform:uppercase"></div>
+        </label>
+        <label class="check-label check-label-block">
+          <input type="checkbox" name="agree" required>
+          <span>Saya menyetujui <a href="/terms" target="_blank">Syarat & Ketentuan</a> dan <a href="/privacy" target="_blank">Kebijakan Privasi</a>.</span>
+        </label>
+        <button class="btn btn-primary btn-block btn-lg" type="submit"><i data-lucide="sparkles"></i> Buat akun & dapatkan API key</button>
+      </form>
+
+      <div class="auth-divider"><span>atau daftar dengan</span></div>
+      <div class="oauth-row">
+        <a class="btn btn-oauth <%= app.oauth.google.enabled ? '' : 'is-disabled' %>" href="/auth/google" title="<%= app.oauth.google.enabled ? 'Daftar dengan Google' : 'Belum dikonfigurasi' %>"><span class="oauth-g">G</span> Google</a>
+        <a class="btn btn-oauth <%= app.oauth.github.enabled ? '' : 'is-disabled' %>" href="/auth/github" title="<%= app.oauth.github.enabled ? 'Daftar dengan GitHub' : 'Belum dikonfigurasi' %>"><i data-lucide="github"></i> GitHub</a>
+      </div>
+      <p class="auth-terms">Free plan: 100 request total, tanpa masa aktif. Upgrade kapan saja dari dashboard.</p>
+    </section>
+  </div>
+</main>
+
+<%- include('partials/footer', { scripts: [] }) %>

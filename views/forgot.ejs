@@ -1,0 +1,26 @@
+<%- include('partials/head', { title, description, bodyClass }) %>
+
+<main class="auth-main">
+  <div class="auth-glow auth-glow-a" aria-hidden="true"></div>
+  <div class="auth-glow auth-glow-b" aria-hidden="true"></div>
+
+  <div class="auth-shell auth-shell-narrow">
+    <section class="auth-card glass-card">
+      <div class="auth-head">
+        <span class="eyebrow">LUPA PASSWORD</span>
+        <h2>Reset akses akunmu</h2>
+        <p>Untuk keamanan, reset password dilakukan manual oleh admin setelah verifikasi identitas.</p>
+      </div>
+      <div class="reset-steps">
+        <div><span>1</span><p>Hubungi admin melalui WhatsApp atau buat tiket dari akun lain.</p></div>
+        <div><span>2</span><p>Sertakan username, email terdaftar, dan bukti kepemilikan yang diminta admin.</p></div>
+        <div><span>3</span><p>Admin akan memberi password sementara. Segera ganti dari halaman Profil.</p></div>
+      </div>
+      <a class="btn btn-primary btn-block" href="https://wa.me/<%= (settings && settings.waAdmin) || app.waAdmin %>" target="_blank" rel="noopener"><i data-lucide="message-circle"></i> Hubungi admin via WhatsApp</a>
+      <a class="btn btn-ghost btn-block" href="/login"><i data-lucide="arrow-left"></i> Kembali ke login</a>
+      <p class="auth-terms">Jangan pernah mengirim password lama atau API key melalui pesan.</p>
+    </section>
+  </div>
+</main>
+
+<%- include('partials/footer', { scripts: [] }) %>

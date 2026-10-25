@@ -1,0 +1,88 @@
+<%- include('../partials/dash-start', { title, description: 'Kode referral dan bonus kuota NusaAPI.', active, user, planData, quota, settings, announcement }) %>
+
+<div class="dash-page-head">
+  <div>
+    <span class="eyebrow">REFERRAL</span>
+    <h2>Ajak teman, dapat bonus kuota.</h2>
+    <p>Bagikan kode referral kamu. Kamu dan teman yang mendaftar sama-sama mendapat bonus request.</p>
+  </div>
+  <div class="dash-page-actions">
+    <a class="btn btn-ghost" href="/dashboard/api"><i data-lucide="gauge"></i> Cek kuota</a>
+  </div>
+</div>
+
+<div class="dash-stat-grid dash-stat-grid-3">
+  <article class="dash-stat glass-card">
+    <div class="dash-stat-top"><span class="stat-icon"><i data-lucide="users"></i></span></div>
+    <small>Total referral</small>
+    <b><%= formatNumber(referral.totalReferrals) %></b>
+    <span>Teman yang mendaftar dengan kode kamu</span>
+  </article>
+  <article class="dash-stat glass-card">
+    <div class="dash-stat-top"><span class="stat-icon amber"><i data-lucide="gift"></i></span></div>
+    <small>Bonus terkumpul</small>
+    <b><%= formatNumber(referral.totalBonus) %></b>
+    <span>Request tambahan dari referral</span>
+  </article>
+  <article class="dash-stat glass-card">
+    <div class="dash-stat-top"><span class="stat-icon green"><i data-lucide="coins"></i></span></div>
+    <small>Bonus per referral</small>
+    <b><%= formatNumber(app.referralBonus) %></b>
+    <span>Untuk kamu dan teman yang mendaftar</span>
+  </article>
+</div>
+
+<div class="dash-grid dash-grid-2-1">
+  <section class="dash-panel glass-card referral-share">
+    <div class="panel-head"><div><span class="eyebrow">KODE KAMU</span><h2>Bagikan link ini</h2></div><i data-lucide="share-2"></i></div>
+    <div class="referral-code-big">
+      <span>Kode referral</span>
+      <div><code><%= referral.code %></code><button type="button" data-copy="<%= referral.code %>" class="mini-copy" aria-label="Copy kode"><i data-lucide="copy"></i></button></div>
+    </div>
+    <label class="field">
+      <span>Link referral</span>
+      <div class="copy-field"><input type="text" value="<%= referral.link %>" readonly id="referralLink"><button type="button" class="btn btn-ghost btn-sm" data-copy="<%= referral.link %>"><i data-lucide="copy"></i> Copy</button></div>
+    </label>
+    <div class="share-row">
+      <a class="btn btn-outline btn-sm" href="https://wa.me/?text=<%= encodeURIComponent('Coba NusaAPI — satu API untuk semua project. Daftar pakai kode referral ' + referral.code + ': ' + referral.link) %>" target="_blank" rel="noopener"><i data-lucide="message-circle"></i> WhatsApp</a>
+      <a class="btn btn-outline btn-sm" href="https://twitter.com/intent/tweet?text=<%= encodeURIComponent('Coba NusaAPI — satu API untuk semua project.') %>&url=<%= encodeURIComponent(referral.link) %>" target="_blank" rel="noopener"><i data-lucide="twitter"></i> X / Twitter</a>
+      <a class="btn btn-outline btn-sm" href="mailto:?subject=<%= encodeURIComponent('Coba NusaAPI') %>&body=<%= encodeURIComponent('Daftar NusaAPI dengan kode referral ' + referral.code + ': ' + referral.link) %>"><i data-lucide="mail"></i> Email</a>
+    </div>
+    <div class="billing-note"><i data-lucide="info"></i><p>Bonus otomatis ditambahkan saat teman mendaftar memakai link atau kode kamu. Satu akun hanya bisa memakai satu kode referral.</p></div>
+  </section>
+
+  <aside class="dash-panel glass-card">
+    <div class="panel-head"><div><span class="eyebrow">CARA KERJA</span><h2>Tiga langkah.</h2></div></div>
+    <div class="vertical-steps">
+      <div><span>1</span><div><b>Bagikan kode</b><p>Kirim link referral ke teman, komunitas, atau media sosial.</p></div></div>
+      <div><span>2</span><div><b>Teman mendaftar</b><p>Kode otomatis terisi saat mereka membuka link.</p></div></div>
+      <div><span>3</span><div><b>Bonus masuk</b><p>Kuota kamu dan teman bertambah otomatis.</p></div></div>
+    </div>
+    <a class="btn btn-primary btn-block" href="/docs">Lihat dokumentasi <i data-lucide="arrow-right"></i></a>
+  </aside>
+</div>
+
+<section class="dash-panel glass-card">
+  <div class="panel-head"><div><span class="eyebrow">RIWAYAT</span><h2>Referral kamu</h2></div><span class="badge badge-gray"><%= referral.list.length %> terbaru</span></div>
+  <% if (referral.list.length) { %>
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead><tr><th>Username</th><th>Bonus</th><th>Tanggal</th><th>Status</th></tr></thead>
+        <tbody>
+          <% referral.list.forEach(function (item) { %>
+            <tr>
+              <td><b>@<%= item.username %></b></td>
+              <td>+<%= formatNumber(item.bonus) %> request</td>
+              <td><span class="mono muted"><%= formatDateTime(item.createdAt) %></span></td>
+              <td><span class="badge badge-green">Aktif</span></td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
+  <% } else { %>
+    <div class="empty-state small"><i data-lucide="users"></i><h3>Belum ada referral</h3><p>Bagikan link kamu untuk mulai mengumpulkan bonus kuota.</p></div>
+  <% } %>
+</section>
+
+<%- include('../partials/dash-end') %>

@@ -1,0 +1,116 @@
+<%- include('../partials/dash-start', { title, description: 'Profil, keamanan, dan pengaturan akun NusaAPI.', active, user, planData, quota, settings, announcement }) %>
+
+<div class="dash-page-head">
+  <div>
+    <span class="eyebrow">PROFIL & KEAMANAN</span>
+    <h2>Atur identitas dan akses akun.</h2>
+    <p>Perbarui profil, ganti password, dan kelola keamanan akun. Email tidak dapat diubah sendiri.</p>
+  </div>
+  <div class="dash-page-actions">
+    <a class="btn btn-ghost" href="/dashboard/api"><i data-lucide="key-round"></i> API key</a>
+  </div>
+</div>
+
+<div class="dash-grid dash-grid-2-1">
+  <section class="dash-panel glass-card">
+    <div class="panel-head"><div><span class="eyebrow">PROFIL</span><h2>Informasi publik</h2></div><span class="badge badge-blue"><%= planData.name %></span></div>
+    <form method="post" action="/dashboard/profile" class="form">
+      <input type="hidden" name="_csrf" value="<%= csrf %>">
+      <div class="profile-avatar-row">
+        <div class="profile-avatar-preview" id="avatarPreview">
+          <% if (user.avatarUrl) { %><img src="<%= user.avatarUrl %>" alt="" referrerpolicy="no-referrer"><% } else { %><span><%= initials(user.name || user.username) %></span><% } %>
+        </div>
+        <div><b><%= user.name || user.username %></b><p>@<%= user.username %> · bergabung <%= formatDate(user.createdAt) %></p><small>Foto menggunakan URL. Biarkan kosong untuk memakai inisial.</small></div>
+      </div>
+      <div class="form-grid">
+        <label class="field"><span>Nama</span><input type="text" name="name" value="<%= user.name || '' %>" maxlength="60" required></label>
+        <label class="field"><span>Username</span><input type="text" name="username" value="<%= user.username %>" pattern="[A-Za-z0-9_.\-]{3,24}" maxlength="24" required></label>
+      </div>
+      <label class="field"><span>Email <small>(tidak dapat diubah)</small></span><input type="email" value="<%= user.email %>" disabled></label>
+      <label class="field"><span>URL foto profil</span><input type="url" name="avatarUrl" id="avatarUrlInput" value="<%= user.avatarUrl || '' %>" maxlength="500" placeholder="https://contoh.com/foto.jpg"></label>
+      <button class="btn btn-primary" type="submit"><i data-lucide="save"></i> Simpan profil</button>
+    </form>
+  </section>
+
+  <aside class="dash-stack">
+    <section class="dash-panel glass-card">
+      <div class="panel-head"><div><span class="eyebrow">AKUN</span><h2>Detail akun</h2></div></div>
+      <div class="detail-list">
+        <div><span>User ID</span><code><%= user.uid %></code></div>
+        <div><span>Email</span><b><%= user.email %></b></div>
+        <div><span>Status email</span><span class="badge badge-<%= user.emailVerified ? 'green' : 'amber' %>"><%= user.emailVerified ? 'Terverifikasi' : 'Belum verifikasi' %></span></div>
+        <div><span>Login terakhir</span><b><%= user.lastLoginAt ? formatDateTime(user.lastLoginAt) : '—' %></b></div>
+        <div><span>IP saat ini</span><code><%= currentIp %></code></div>
+        <div><span>Metode login</span>
+          <div class="provider-badges">
+            <% if (hasPassword) { %><span class="badge badge-blue">Password</span><% } %>
+            <% if (providers.google) { %><span class="badge badge-green">Google</span><% } %>
+            <% if (providers.github) { %><span class="badge badge-gray">GitHub</span><% } %>
+            <% if (!hasPassword && !providers.google && !providers.github) { %><span class="badge badge-gray">—</span><% } %>
+          </div>
+        </div>
+      </div>
+      <% if (!providers.google || !providers.github) { %>
+        <div class="provider-links">
+          <% if (!providers.google) { %><a class="btn btn-oauth btn-sm" href="/auth/google"><span class="oauth-g">G</span> Hubungkan Google</a><% } %>
+          <% if (!providers.github) { %><a class="btn btn-oauth btn-sm" href="/auth/github"><i data-lucide="github"></i> Hubungkan GitHub</a><% } %>
+        </div>
+      <% } %>
+    </section>
+
+    <section class="dash-panel glass-card">
+      <div class="panel-head"><div><span class="eyebrow">API KEY</span><h2>Status kredensial</h2></div><i data-lucide="key-round"></i></div>
+      <div class="api-key-mini"><code><%= user.apiKeyMasked %></code><span class="badge badge-green">Aktif</span></div>
+      <p class="muted-text">API key dapat direveal dan dirotasi dari halaman API & Kuota.</p>
+      <a class="btn btn-ghost btn-block" href="/dashboard/api">Kelola API key <i data-lucide="arrow-right"></i></a>
+    </section>
+  </aside>
+</div>
+
+<div class="dash-grid dash-grid-2">
+  <section class="dash-panel glass-card">
+    <div class="panel-head"><div><span class="eyebrow">KEAMANAN</span><h2>Ganti password</h2></div><i data-lucide="lock"></i></div>
+    <% if (!hasPassword) { %><div class="inline-note"><i data-lucide="info"></i> Akun ini belum punya password. Buat password untuk bisa login tanpa OAuth.</div><% } %>
+    <form method="post" action="/dashboard/profile/password" class="form">
+      <input type="hidden" name="_csrf" value="<%= csrf %>">
+      <% if (hasPassword) { %>
+        <label class="field"><span>Password saat ini</span><input type="password" name="currentPassword" autocomplete="current-password" required></label>
+      <% } %>
+      <div class="form-grid">
+        <label class="field"><span>Password baru</span><input type="password" name="newPassword" minlength="8" autocomplete="new-password" required placeholder="Min. 8 karakter"><small class="field-hint">Huruf dan angka.</small></label>
+        <label class="field"><span>Ulangi password baru</span><input type="password" name="confirmPassword" minlength="8" autocomplete="new-password" required></label>
+      </div>
+      <button class="btn btn-primary" type="submit"><i data-lucide="shield-check"></i> <%= hasPassword ? 'Perbarui password' : 'Buat password' %></button>
+    </form>
+  </section>
+
+  <section class="dash-panel glass-card" id="notifications">
+    <div class="panel-head"><div><span class="eyebrow">NOTIFIKASI</span><h2>Preferensi</h2></div><i data-lucide="bell"></i></div>
+    <p class="muted-text">Notifikasi browser bersifat opsional dan hanya dikirim jika kamu mengizinkan di browser.</p>
+    <form method="post" action="/dashboard/profile/notifications" class="form">
+      <input type="hidden" name="_csrf" value="<%= csrf %>">
+      <label class="switch-row"><span><b>Notifikasi browser</b><small>Info kuota hampir habis dan balasan tiket.</small></span><input type="checkbox" name="browser" <%= user.notificationPrefs && user.notificationPrefs.browser ? 'checked' : '' %>></label>
+      <button class="btn btn-outline" type="submit">Simpan preferensi</button>
+    </form>
+    <div class="inline-note"><i data-lucide="info"></i> Email transaksional belum diaktifkan pada versi ini. Semua info penting tampil di dashboard.</div>
+  </section>
+</div>
+
+<section class="dash-panel glass-card danger-zone" id="danger">
+  <div class="panel-head"><div><span class="eyebrow">ZONA BAHAYA</span><h2>Hapus akun</h2></div><i data-lucide="triangle-alert"></i></div>
+  <p>Menghapus akun akan menghapus profil, API key, kuota, tiket, testimoni, dan data referral. Tindakan ini tidak dapat dibatalkan.</p>
+  <details class="danger-details">
+    <summary class="btn btn-danger">Hapus akun permanen</summary>
+    <form method="post" action="/dashboard/profile/delete" class="form danger-form" data-confirm="Hapus akun permanen? Semua data akun, API key, dan tiket akan hilang.">
+      <input type="hidden" name="_csrf" value="<%= csrf %>">
+      <% if (hasPassword) { %>
+        <label class="field"><span>Konfirmasi dengan password</span><input type="password" name="password" autocomplete="current-password" required></label>
+      <% } else { %>
+        <label class="field"><span>Ketik <code>HAPUS</code> untuk konfirmasi</span><input type="text" name="confirmation" placeholder="HAPUS" required></label>
+      <% } %>
+      <button class="btn btn-danger" type="submit"><i data-lucide="trash-2"></i> Hapus akun saya</button>
+    </form>
+  </details>
+</section>
+
+<%- include('../partials/dash-end') %>

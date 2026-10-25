@@ -1,0 +1,183 @@
+<%- include('../partials/dash-start', { title, description: 'Kelola API key, kuota, dan whitelist IP NusaAPI.', active, user, planData, quota, settings, announcement }) %>
+
+<div class="dash-page-head">
+  <div>
+    <span class="eyebrow">API & KUOTA</span>
+    <h2>Kunci akses API kamu.</h2>
+    <p>Simpan API key di server atau environment variable. Jangan pernah menaruhnya di kode frontend publik.</p>
+  </div>
+  <div class="dash-page-actions">
+    <a class="btn btn-ghost" href="/docs"><i data-lucide="book-open"></i> Dokumentasi</a>
+    <a class="btn btn-primary" href="/monitor"><i data-lucide="activity"></i> Monitor</a>
+  </div>
+</div>
+
+<% if (justCreatedKey) { %>
+  <div class="key-reveal-card glass-card" id="newKeyCard">
+    <div class="key-reveal-head">
+      <span class="key-reveal-icon"><i data-lucide="key-round"></i></span>
+      <div><span class="eyebrow">API KEY BARU</span><h3>Simpan key ini sekarang.</h3><p>Untuk keamanan, key lengkap hanya ditampilkan sekali di halaman ini. Kamu masih bisa reveal nanti, tapi jangan bagikan ke siapa pun.</p></div>
+    </div>
+    <div class="key-reveal-row">
+      <code id="newApiKeyValue"><%= justCreatedKey %></code>
+      <button type="button" class="btn btn-primary btn-sm" data-copy="<%= justCreatedKey %>"><i data-lucide="copy"></i> Copy</button>
+    </div>
+    <div class="key-reveal-warning"><i data-lucide="triangle-alert"></i> Jangan screenshot atau kirim key lewat chat. Jika bocor, segera rotasi.</div>
+  </div>
+<% } %>
+
+<div class="dash-grid dash-grid-2-1">
+  <section class="dash-panel glass-card">
+    <div class="panel-head"><div><span class="eyebrow">KREDENSIAL</span><h2>API key aktif</h2></div><span class="badge badge-green">Aktif</span></div>
+
+    <% if (keyRecord) { %>
+      <div class="api-key-box">
+        <div class="api-key-label"><span>Secret key</span><span class="badge badge-blue"><%= keyRecord.type === 'custom' ? 'Custom' : 'Generated' %></span></div>
+        <div class="api-key-row">
+          <code id="apiKeyMasked" data-masked="<%= keyRecord.masked %>"><%= keyRecord.masked %></code>
+          <button type="button" class="btn btn-ghost btn-sm" id="revealKeyBtn" data-reveal-key><i data-lucide="eye"></i> Reveal</button>
+          <button type="button" class="btn btn-ghost btn-sm" id="copyKeyBtn" data-copy-key><i data-lucide="copy"></i> Copy</button>
+        </div>
+        <div class="api-key-meta">
+          <span><i data-lucide="calendar"></i> Dibuat <%= formatDate(keyRecord.createdAt) %></span>
+          <span><i data-lucide="hash"></i> Akhiran <code><%= keyRecord.last4 %></code></span>
+          <span><i data-lucide="shield-check"></i> Disimpan terenkripsi</span>
+        </div>
+      </div>
+
+      <div class="code-tabs-row">
+        <h3>Contoh pemakaian</h3>
+        <span class="muted-text">Ganti <code>YOUR_API_KEY</code> dengan key kamu.</span>
+      </div>
+      <div class="mini-code code-stack">
+        <code>curl <%= app.url %>/api/tools/uuid \
+  -H "Authorization: Bearer YOUR_API_KEY"</code>
+        <button type="button" data-copy='curl <%= app.url %>/api/tools/uuid -H "Authorization: Bearer YOUR_API_KEY"' aria-label="Copy"><i data-lucide="copy"></i></button>
+      </div>
+      <div class="mini-code code-stack">
+        <code>fetch("<%= app.url %>/api/tools/uuid", {
+  headers: { "X-API-Key": "YOUR_API_KEY" }
+}).then(r => r.json())</code>
+        <button type="button" data-copy='fetch("<%= app.url %>/api/tools/uuid", { headers: { "X-API-Key": "YOUR_API_KEY" } })' aria-label="Copy"><i data-lucide="copy"></i></button>
+      </div>
+
+      <div class="danger-inline">
+        <div><b>Rotasi API key</b><p>Key lama langsung tidak berlaku. Semua aplikasi yang memakai key lama harus diperbarui.</p></div>
+        <form method="post" action="/dashboard/api/rotate" data-confirm="Rotasi API key sekarang? Key lama akan langsung tidak berlaku.">
+          <input type="hidden" name="_csrf" value="<%= csrf %>">
+          <button class="btn btn-danger btn-sm" type="submit"><i data-lucide="refresh-cw"></i> Rotasi key</button>
+        </form>
+      </div>
+    <% } else { %>
+      <div class="alert alert-warning"><i data-lucide="key-round"></i><div><b>Belum ada API key.</b><p>Buat key baru untuk mulai memanggil API.</p></div></div>
+      <form method="post" action="/dashboard/api/rotate">
+        <input type="hidden" name="_csrf" value="<%= csrf %>">
+        <button class="btn btn-primary" type="submit"><i data-lucide="plus"></i> Buat API key</button>
+      </form>
+    <% } %>
+
+    <div class="custom-key-block">
+      <div class="custom-key-head">
+        <div><h3>Custom API key</h3><p>Pakai key yang mudah diingat, misalnya <code>nusa_project_rahasia</code>.</p></div>
+        <% if (!planData.customKey && user.role !== 'admin') { %><span class="badge badge-amber">Plus+</span><% } else { %><span class="badge badge-green">Tersedia</span><% } %>
+      </div>
+      <% if (planData.customKey || user.role === 'admin') { %>
+        <form method="post" action="/dashboard/api/custom" class="inline-form">
+          <input type="hidden" name="_csrf" value="<%= csrf %>">
+          <input type="text" name="customKey" minlength="12" maxlength="80" placeholder="nusa_project_rahasia" required>
+          <button class="btn btn-outline btn-sm" type="submit">Simpan custom key</button>
+        </form>
+        <small class="field-hint">Minimal 12 karakter, hanya huruf, angka, titik, garis bawah, dan strip. Key lama akan diganti.</small>
+      <% } else { %>
+        <a class="btn btn-ghost btn-sm" href="/dashboard/billing">Upgrade ke Plus <i data-lucide="arrow-right"></i></a>
+      <% } %>
+    </div>
+  </section>
+
+  <aside class="dash-stack">
+    <section class="dash-panel glass-card">
+      <div class="panel-head"><div><span class="eyebrow">KUOTA</span><h2><%= planData.name %> plan</h2></div><i data-lucide="gauge"></i></div>
+      <div class="quota-display"><b><%= formatNumber(quota.remaining) %></b><span>sisa request</span></div>
+      <div class="progress"><div class="progress-fill" style="width:<%= quota.percent %>%"></div></div>
+      <div class="quota-meta"><span><%= formatNumber(quota.used) %> terpakai</span><span><%= formatNumber(quota.limit) %> total</span></div>
+      <div class="quota-detail">
+        <div><span>Masa aktif</span><b><%= user.expiresAt ? formatDate(user.expiresAt) : 'Tanpa batas' %></b></div>
+        <div><span>Reset kuota</span><b>Tidak ada reset otomatis</b></div>
+      </div>
+      <a class="btn btn-primary btn-block" href="/dashboard/billing">Tambah kuota <i data-lucide="arrow-right"></i></a>
+    </section>
+
+    <section class="dash-panel glass-card">
+      <div class="panel-head"><div><span class="eyebrow">TRAFFIC</span><h2>Pemakaian 30 hari</h2></div></div>
+      <div class="chart-wrap dash-chart-small"><canvas id="apiUsageChart" height="160" aria-label="Grafik pemakaian 30 hari"></canvas></div>
+      <div class="chart-legend"><span><i class="legend-dot cyan"></i> Request</span><span><i class="legend-dot violet"></i> Error</span></div>
+    </section>
+  </aside>
+</div>
+
+<section class="dash-panel glass-card" id="whitelist">
+  <div class="panel-head"><div><span class="eyebrow">KEAMANAN</span><h2>Whitelist IP</h2></div><span class="badge badge-<%= allowAllIp ? 'gray' : 'green' %>"><%= allowAllIp ? 'Semua IP' : 'Dibatasi' %></span></div>
+  <p class="muted-text">Batasi API key agar hanya bisa dipakai dari IP server tertentu. Cocok untuk produksi. FreeLimit tidak terpengaruh.</p>
+
+  <div class="current-ip-row">
+    <span>IP kamu saat ini</span>
+    <code><%= currentIp %></code>
+    <button type="button" data-copy="<%= currentIp %>" class="mini-copy" aria-label="Copy IP"><i data-lucide="copy"></i></button>
+  </div>
+
+  <form method="post" action="/dashboard/api/whitelist" class="toggle-row">
+    <input type="hidden" name="_csrf" value="<%= csrf %>">
+    <input type="hidden" name="action" value="toggle">
+    <label class="switch-label"><input type="checkbox" name="allowAllIp" <%= allowAllIp ? 'checked' : '' %> onchange="this.form.submit()"> <span>Izinkan semua IP</span></label>
+    <small>Matikan untuk mengaktifkan whitelist di bawah.</small>
+  </form>
+
+  <form method="post" action="/dashboard/api/whitelist" class="inline-form whitelist-add">
+    <input type="hidden" name="_csrf" value="<%= csrf %>">
+    <input type="hidden" name="action" value="add">
+    <input type="text" name="ip" placeholder="103.10.20.30 atau 103.10.0.0/24" required>
+    <button class="btn btn-outline btn-sm" type="submit"><i data-lucide="plus"></i> Tambah IP</button>
+  </form>
+
+  <% if (ipWhitelist.length) { %>
+    <div class="whitelist-list">
+      <% ipWhitelist.forEach(function (ip) { %>
+        <div class="whitelist-row">
+          <span><i data-lucide="server"></i><code><%= ip %></code><% if (ip === currentIp) { %><span class="badge badge-green">IP kamu</span><% } %></span>
+          <form method="post" action="/dashboard/api/whitelist">
+            <input type="hidden" name="_csrf" value="<%= csrf %>">
+            <input type="hidden" name="action" value="remove">
+            <input type="hidden" name="ip" value="<%= ip %>">
+            <button class="mini-copy danger" type="submit" aria-label="Hapus IP"><i data-lucide="trash-2"></i></button>
+          </form>
+        </div>
+      <% }); %>
+    </div>
+  <% } else { %>
+    <div class="empty-mini small"><i data-lucide="shield-off"></i><p><%= allowAllIp ? 'Whitelist belum diaktifkan.' : 'Belum ada IP di whitelist. Tambahkan IP server agar API bisa diakses.' %></p></div>
+  <% } %>
+  <% if (!allowAllIp && !ipWhitelist.length) { %><div class="alert alert-danger"><i data-lucide="triangle-alert"></i><div><b>API akan menolak semua request.</b><p>Tambahkan minimal satu IP atau aktifkan kembali “Izinkan semua IP”.</p></div></div><% } %>
+</section>
+
+<section class="dash-panel glass-card">
+  <div class="panel-head"><div><span class="eyebrow">REFERENSI</span><h2>Akses endpoint berdasarkan paket</h2></div><a class="link-arrow" href="/pricing">Bandingkan paket <i data-lucide="arrow-right"></i></a></div>
+  <div class="table-wrap">
+    <table class="data-table compact-table">
+      <thead><tr><th>Kategori</th><th>Endpoint</th><th>Minimal paket</th><th>Status</th></tr></thead>
+      <tbody>
+        <% endpoints.slice(0, 8).forEach(function (ep) { %>
+          <tr>
+            <td><%= ep.categoryName %></td>
+            <td><code><%= ep.path.replace('/api', '') %></code></td>
+            <td><%= ep.minPlan === 'free' ? 'Free' : getPlan(ep.minPlan).name %></td>
+            <td><span class="badge badge-<%= planRank(user.plan) >= planRank(ep.minPlan) ? 'green' : 'gray' %>"><%= planRank(user.plan) >= planRank(ep.minPlan) ? 'Tersedia' : 'Terkunci' %></span></td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<script type="application/json" id="apiUsageSeries"><%- JSON.stringify(usageSeries || []).replace(/</g, '\\u003c') %></script>
+
+<%- include('../partials/dash-end') %>

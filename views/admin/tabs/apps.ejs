@@ -1,0 +1,54 @@
+<div class="admin-page-head">
+  <div>
+    <span class="eyebrow">APLIKASI</span>
+    <h2>Kelola file download.</h2>
+    <p>Tambahkan Postman collection, CLI, atau file lain. Letakkan file di <code>public/downloads/</code> lalu isi URL relatif.</p>
+  </div>
+  <div class="admin-page-actions"><span class="badge badge-gray"><%= apps.length %> aplikasi</span></div>
+</div>
+
+<div class="admin-grid admin-grid-2">
+  <section class="admin-panel glass-card">
+    <div class="panel-head"><div><span class="eyebrow"><%= selected ? 'EDIT' : 'BARU' %></span><h2><%= selected ? selected.name : 'Aplikasi baru' %></h2></div><% if (selected) { %><a class="mini-copy" href="/admin/apps" aria-label="Batal edit"><i data-lucide="x"></i></a><% } %></div>
+    <form method="post" action="/admin/apps" class="form">
+      <input type="hidden" name="_csrf" value="<%= csrf %>">
+      <div class="form-grid">
+        <label class="field"><span>ID <small>(slug)</small></span><input type="text" name="id" value="<%= selected ? selected.id : '' %>" maxlength="60" placeholder="postman-collection"></label>
+        <label class="field"><span>Nama</span><input type="text" name="name" value="<%= selected ? selected.name : '' %>" maxlength="80" required></label>
+      </div>
+      <label class="field"><span>Deskripsi</span><textarea name="description" rows="3" maxlength="300" placeholder="Penjelasan singkat aplikasi..."><%= selected ? selected.description : '' %></textarea></label>
+      <div class="form-grid">
+        <label class="field"><span>Platform</span><input type="text" name="platform" value="<%= selected ? selected.platform : '' %>" maxlength="60" placeholder="Postman / Node.js / Windows"></label>
+        <label class="field"><span>Versi</span><input type="text" name="version" value="<%= selected ? selected.version : '1.0.0' %>" maxlength="30"></label>
+      </div>
+      <div class="form-grid">
+        <label class="field"><span>Ukuran</span><input type="text" name="size" value="<%= selected ? selected.size : '' %>" maxlength="30" placeholder="24 KB"></label>
+        <label class="field"><span>Icon Lucide</span><input type="text" name="icon" value="<%= selected ? selected.icon : 'package' %>" maxlength="30" placeholder="braces"></label>
+      </div>
+      <label class="field"><span>URL file</span><input type="text" name="url" value="<%= selected ? selected.url : '/downloads/' %>" maxlength="500" placeholder="/downloads/postman-collection.json" required><small class="field-hint">Path lokal atau URL https.</small></label>
+      <label class="switch-label"><input type="checkbox" name="active" <%= !selected || selected.active !== false ? 'checked' : '' %>> <span>Tampilkan di halaman download</span></label>
+      <button class="btn btn-primary" type="submit"><i data-lucide="save"></i> <%= selected ? 'Simpan perubahan' : 'Tambah aplikasi' %></button>
+    </form>
+  </section>
+
+  <section class="admin-panel glass-card">
+    <div class="panel-head"><div><span class="eyebrow">DAFTAR</span><h2>Aplikasi</h2></div></div>
+    <% if (apps.length) { %>
+      <div class="app-admin-list">
+        <% apps.forEach(function (item) { %>
+          <div class="app-admin-row">
+            <span class="app-icon small"><i data-lucide="<%= item.icon || 'package' %>"></i></span>
+            <div class="app-admin-copy"><b><%= item.name %></b><small><%= item.platform %> · v<%= item.version %> · <%= item.size %></small><code><%= item.url %></code></div>
+            <div class="row-actions">
+              <a class="mini-copy" href="/admin/apps?edit=<%= item.id %>" title="Edit"><i data-lucide="pencil"></i></a>
+              <form method="post" action="/admin/apps/<%= item.id %>/delete" data-confirm="Hapus aplikasi <%= item.name %>?">
+                <input type="hidden" name="_csrf" value="<%= csrf %>">
+                <button class="mini-copy danger" type="submit" title="Hapus"><i data-lucide="trash-2"></i></button>
+              </form>
+            </div>
+          </div>
+        <% }); %>
+      </div>
+    <% } else { %><div class="empty-mini"><i data-lucide="package-open"></i><p>Belum ada aplikasi.</p></div><% } %>
+  </section>
+</div>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title><%= typeof title !== 'undefined' ? title : (app.name + ' — ' + app.tagline) %></title>
+  <meta name="description" content="<%= typeof description !== 'undefined' ? description : app.description %>">
+  <meta name="robots" content="index,follow,max-image-preview:large">
+  <meta name="theme-color" content="#060a14">
+  <meta name="csrf-token" content="<%= csrf || '' %>">
+  <link rel="canonical" href="<%= app.url %><%= currentPath || '/' %>">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="<%= app.name %>">
+  <meta property="og:title" content="<%= typeof title !== 'undefined' ? title : app.name %>">
+  <meta property="og:description" content="<%= typeof description !== 'undefined' ? description : app.description %>">
+  <meta property="og:url" content="<%= app.url %><%= currentPath || '/' %>">
+  <meta property="og:image" content="<%= app.url %>/img/og-cover.svg">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/img/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="<%= typeof bodyClass !== 'undefined' ? bodyClass : '' %>" data-page="<%= currentPath || '/' %>">
+  <%- include('flash') %>
+  <div class="page-noise" aria-hidden="true"></div>

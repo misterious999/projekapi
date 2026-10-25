@@ -1,0 +1,126 @@
+<div class="admin-page-head">
+  <div>
+    <span class="eyebrow">PENGGUNA</span>
+    <h2>Kelola akun pengguna.</h2>
+    <p>Ubah plan, kuota, masa aktif, role, dan status akun. Semua perubahan tercatat di log admin.</p>
+  </div>
+  <div class="admin-page-actions">
+    <span class="badge badge-gray"><%= users.length %> user</span>
+  </div>
+</div>
+
+<section class="admin-panel glass-card">
+  <form method="get" action="/admin/users" class="admin-filter">
+    <label class="search-field"><i data-lucide="search"></i><input type="search" name="q" value="<%= q %>" placeholder="Cari username, email, atau nama..."></label>
+    <select name="status">
+      <option value="">Semua status</option>
+      <option value="active" <%= status === 'active' ? 'selected' : '' %>>Aktif</option>
+      <option value="inactive" <%= status === 'inactive' ? 'selected' : '' %>>Nonaktif</option>
+      <option value="expired" <%= status === 'expired' ? 'selected' : '' %>>Expired</option>
+      <option value="online" <%= status === 'online' ? 'selected' : '' %>>Online</option>
+      <option value="paid" <%= status === 'paid' ? 'selected' : '' %>>Berbayar</option>
+    </select>
+    <select name="plan">
+      <option value="">Semua plan</option>
+      <% plans.forEach(function (plan) { %><option value="<%= plan.key %>" <%= planFilter === plan.key ? 'selected' : '' %>><%= plan.name %></option><% }); %>
+    </select>
+    <button class="btn btn-outline btn-sm" type="submit"><i data-lucide="filter"></i> Filter</button>
+    <% if (q || status || planFilter) { %><a class="btn btn-ghost btn-sm" href="/admin/users">Reset</a><% } %>
+  </form>
+</section>
+
+<div class="admin-grid <%= selected ? 'admin-grid-users' : '' %>">
+  <section class="admin-panel glass-card">
+    <div class="panel-head"><div><span class="eyebrow">DAFTAR</span><h2>Pengguna</h2></div><span class="badge badge-gray"><%= users.length %> hasil</span></div>
+    <% if (users.length) { %>
+      <div class="table-wrap">
+        <table class="data-table admin-users-table">
+          <thead><tr><th>User</th><th>Plan</th><th>Kuota</th><th>Status</th><th>Expired</th><th></th></tr></thead>
+          <tbody>
+            <% users.forEach(function (u) { %>
+              <tr class="<%= selected && selected.uid === u.uid ? 'is-selected' : '' %>">
+                <td>
+                  <a class="table-user" href="/admin/users?edit=<%= u.uid %>&q=<%= encodeURIComponent(q) %>&status=<%= status %>&plan=<%= planFilter %>">
+                    <span class="mini-avatar"><%= initials(u.name || u.username) %></span>
+                    <span><b><%= u.username %></b><small><%= u.email %></small></span>
+                  </a>
+                </td>
+                <td><span class="plan-badge plan-<%= u.plan %>"><%= u.planData.name %></span><% if (u.role === 'admin') { %><span class="badge badge-violet">Admin</span><% } %></td>
+                <td><span class="mono"><%= formatNumber(Math.max(0, Number(u.quotaLimit || 0) - Number(u.quotaUsed || 0))) %> / <%= formatNumber(u.quotaLimit) %></span></td>
+                <td><span class="badge badge-<%= u.isActive === false ? 'red' : (u.expired ? 'amber' : 'green') %>"><%= u.isActive === false ? 'Nonaktif' : (u.expired ? 'Expired' : 'Aktif') %></span><% if (u.online) { %><span class="online-dot" title="Online"></span><% } %></td>
+                <td><span class="mono muted"><%= u.expiresAt ? formatDate(u.expiresAt) : '—' %></span></td>
+                <td>
+                  <div class="row-actions">
+                    <a class="mini-copy" href="/admin/users?edit=<%= u.uid %>" title="Edit"><i data-lucide="pencil"></i></a>
+                    <form method="post" action="/admin/users/<%= u.uid %>/toggle" data-confirm="<%= u.isActive === false ? 'Aktifkan' : 'Nonaktifkan' %> user @<%= u.username %>?">
+                      <input type="hidden" name="_csrf" value="<%= csrf %>">
+                      <button class="mini-copy" type="submit" title="<%= u.isActive === false ? 'Aktifkan' : 'Nonaktifkan' %>"><i data-lucide="<%= u.isActive === false ? 'user-check' : 'user-x' %>"></i></button>
+                    </form>
+                  </div>
+                </td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+    <% } else { %><div class="empty-mini"><i data-lucide="search-x"></i><p>Tidak ada user yang cocok.</p></div><% } %>
+  </section>
+
+  <% if (selected) { %>
+    <aside class="admin-panel glass-card user-editor">
+      <div class="panel-head"><div><span class="eyebrow">EDIT USER</span><h2>@<%= selected.username %></h2></div><a class="mini-copy" href="/admin/users" aria-label="Tutup"><i data-lucide="x"></i></a></div>
+      <div class="user-editor-meta">
+        <span class="mini-avatar large"><%= initials(selected.name || selected.username) %></span>
+        <div><b><%= selected.email %></b><small>UID: <code><%= selected.uid %></code></small><small>Dibuat <%= formatDateTime(selected.createdAt) %></small></div>
+      </div>
+
+      <form method="post" action="/admin/users/<%= selected.uid %>" class="form">
+        <input type="hidden" name="_csrf" value="<%= csrf %>">
+        <div class="form-grid">
+          <label class="field"><span>Nama</span><input type="text" name="name" value="<%= selected.name || '' %>" maxlength="60" required></label>
+          <label class="field"><span>Role</span><select name="role" <%= selected.uid === adminUser.uid ? 'disabled' : '' %>><option value="user" <%= selected.role !== 'admin' ? 'selected' : '' %>>User</option><option value="admin" <%= selected.role === 'admin' ? 'selected' : '' %>>Admin</option></select></label>
+        </div>
+        <div class="form-grid">
+          <label class="field"><span>Plan</span><select name="plan"><% plans.forEach(function (plan) { %><option value="<%= plan.key %>" <%= selected.plan === plan.key ? 'selected' : '' %>><%= plan.name %> · <%= formatNumber(plan.quota) %></option><% }); %></select></label>
+          <label class="field"><span>Kuota total</span><input type="number" name="quotaLimit" value="<%= selected.quotaLimit || 0 %>" min="0" step="1" required></label>
+        </div>
+        <label class="field"><span>Expired pada</span><input type="date" name="expiresAt" value="<%= dateInput(selected.expiresAt) %>"><small class="field-hint">Kosongkan untuk tanpa batas (Free).</small></label>
+        <label class="switch-label"><input type="checkbox" name="isActive" <%= selected.isActive !== false ? 'checked' : '' %>> <span>Akun aktif</span></label>
+        <button class="btn btn-primary btn-block" type="submit"><i data-lucide="save"></i> Simpan perubahan</button>
+      </form>
+
+      <div class="editor-actions">
+        <form method="post" action="/admin/users/<%= selected.uid %>/extend" class="inline-form">
+          <input type="hidden" name="_csrf" value="<%= csrf %>">
+          <input type="number" name="days" value="30" min="1" max="3650" required>
+          <button class="btn btn-outline btn-sm" type="submit">Perpanjang (hari)</button>
+        </form>
+        <form method="post" action="/admin/users/<%= selected.uid %>/quota" class="inline-form">
+          <input type="hidden" name="_csrf" value="<%= csrf %>">
+          <input type="number" name="amount" placeholder="+1000 / -500" required>
+          <button class="btn btn-outline btn-sm" type="submit">Tambah/kurangi kuota</button>
+        </form>
+      </div>
+
+      <details class="admin-details">
+        <summary>Reset password</summary>
+        <form method="post" action="/admin/users/<%= selected.uid %>/password" class="form">
+          <input type="hidden" name="_csrf" value="<%= csrf %>">
+          <label class="field"><span>Password baru</span><input type="text" name="newPassword" minlength="8" placeholder="Min. 8 karakter, huruf + angka" required></label>
+          <button class="btn btn-outline btn-sm" type="submit">Reset password</button>
+        </form>
+      </details>
+
+      <% if (selected.uid !== adminUser.uid) { %>
+        <details class="admin-details danger-details">
+          <summary>Hapus user</summary>
+          <form method="post" action="/admin/users/<%= selected.uid %>/delete" class="form" data-confirm="Hapus @<%= selected.username %> permanen? Semua data, key, dan tiket ikut terhapus.">
+            <input type="hidden" name="_csrf" value="<%= csrf %>">
+            <p class="muted-text">Tindakan ini tidak dapat dibatalkan.</p>
+            <button class="btn btn-danger btn-sm" type="submit"><i data-lucide="trash-2"></i> Hapus permanen</button>
+          </form>
+        </details>
+      <% } %>
+    </aside>
+  <% } %>
+</div>

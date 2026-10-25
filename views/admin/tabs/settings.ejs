@@ -1,0 +1,64 @@
+<div class="admin-page-head">
+  <div>
+    <span class="eyebrow">PENGATURAN</span>
+    <h2>Konfigurasi platform.</h2>
+    <p>Pengaturan ini langsung memengaruhi halaman publik, batas FreeLimit, dan alur order.</p>
+  </div>
+  <div class="admin-page-actions"><span class="badge badge-<%= app.isProd ? 'green' : 'amber' %>"><%= app.env %></span></div>
+</div>
+
+<div class="admin-grid admin-grid-2">
+  <section class="admin-panel glass-card">
+    <div class="panel-head"><div><span class="eyebrow">PUBLIK</span><h2>Pengaturan umum</h2></div><i data-lucide="settings"></i></div>
+    <form method="post" action="/admin/settings" class="form">
+      <input type="hidden" name="_csrf" value="<%= csrf %>">
+      <div class="form-grid">
+        <label class="field"><span>Nomor WhatsApp admin</span><input type="text" name="waAdmin" value="<%= settings.waAdmin %>" maxlength="20" placeholder="62812..."><small class="field-hint">Format internasional tanpa +, hanya angka.</small></label>
+        <label class="field"><span>Batas FreeLimit / hari</span><input type="number" name="freeLimitDaily" value="<%= settings.freeLimitDaily %>" min="1" max="100000" required></label>
+      </div>
+      <label class="switch-label"><input type="checkbox" name="registrationOpen" <%= settings.registrationOpen ? 'checked' : '' %>> <span>Pendaftaran dibuka</span></label>
+      <label class="field"><span>Pengumuman</span><textarea name="announcement" rows="3" maxlength="500" placeholder="Contoh: Maintenance 27 Okt 02.00–03.00 WITA."><%= settings.announcement || '' %></textarea></label>
+      <label class="switch-label"><input type="checkbox" name="announcementActive" <%= settings.announcementActive ? 'checked' : '' %>> <span>Tampilkan pengumuman di situs</span></label>
+      <label class="field"><span>Pesan maintenance</span><input type="text" name="maintenanceMessage" value="<%= settings.maintenanceMessage || '' %>" maxlength="300" placeholder="Pesan jika layanan sedang maintenance."></label>
+      <button class="btn btn-primary" type="submit"><i data-lucide="save"></i> Simpan pengaturan</button>
+    </form>
+  </section>
+
+  <aside class="admin-panel glass-card">
+    <div class="panel-head"><div><span class="eyebrow">STATUS</span><h2>Integrasi</h2></div></div>
+    <div class="detail-list">
+      <div><span>Environment</span><span class="badge badge-<%= app.isProd ? 'green' : 'amber' %>"><%= app.env %></span></div>
+      <div><span>Versi</span><b>v<%= app.version %></b></div>
+      <div><span>Base URL</span><code><%= app.url %></code></div>
+      <div><span>Admin email</span><code><%= app.adminEmail %></code></div>
+      <div><span>AI provider</span><span class="badge badge-<%= app.ai.apiKey ? 'green' : 'gray' %>"><%= app.ai.apiKey ? 'Aktif' : 'Demo fallback' %></span></div>
+      <div><span>Google OAuth</span><span class="badge badge-<%= app.oauth.google.enabled ? 'green' : 'gray' %>"><%= app.oauth.google.enabled ? 'Aktif' : 'Belum' %></span></div>
+      <div><span>GitHub OAuth</span><span class="badge badge-<%= app.oauth.github.enabled ? 'green' : 'gray' %>"><%= app.oauth.github.enabled ? 'Aktif' : 'Belum' %></span></div>
+      <div><span>WhatsApp</span><b><%= settings.waAdmin %></b></div>
+      <div><span>FreeLimit</span><b><%= formatNumber(settings.freeLimitDaily) %> / hari</b></div>
+    </div>
+
+    <div class="admin-panel-sub">
+      <h3>Checklist production</h3>
+      <ul class="check-list">
+        <li><i data-lucide="check"></i> Ganti <code>SESSION_SECRET</code> dan <code>KEY_ENCRYPTION_SECRET</code>.</li>
+        <li><i data-lucide="check"></i> Set <code>APP_URL</code> ke domain HTTPS.</li>
+        <li><i data-lucide="check"></i> Aktifkan Firebase rules deny-all untuk client.</li>
+        <li><i data-lucide="check"></i> Pasang reverse proxy + HTTPS.</li>
+        <li><i data-lucide="check"></i> Backup database secara berkala.</li>
+        <li><i data-lucide="check"></i> Batasi akses <code>/admin</code> dan monitor error.</li>
+      </ul>
+    </div>
+  </aside>
+</div>
+
+<section class="admin-panel glass-card">
+  <div class="panel-head"><div><span class="eyebrow">FIREBASE</span><h2>Lokasi data</h2></div></div>
+  <div class="detail-list">
+    <div><span>Database root</span><code><%= app.dbRoot %></code></div>
+    <div><span>Auth</span><b>Firebase Admin SDK (server-side)</b></div>
+    <div><span>Session store</span><b>Realtime Database</b></div>
+    <div><span>Client access</span><b>Tidak ada (Admin SDK)</b></div>
+  </div>
+  <div class="inline-note"><i data-lucide="info"></i> Jangan pernah menaruh service account di folder publik. File <code>serviceAccountKey.json</code> hanya boleh dibaca proses server.</div>
+</section>

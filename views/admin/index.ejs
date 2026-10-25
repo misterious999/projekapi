@@ -1,0 +1,55 @@
+<%- include('../partials/head', { title, description: 'Panel admin NusaAPI.', bodyClass: 'page-admin' }) %>
+
+<div class="admin-shell">
+  <aside class="admin-sidebar" id="adminSidebar">
+    <div class="admin-sidebar-inner">
+      <a class="brand" href="/">
+        <img src="/img/logo.svg" alt="" width="36" height="36">
+        <span class="brand-name">Nusa<strong>API</strong></span>
+      </a>
+      <span class="admin-label"><i data-lucide="shield"></i> Admin Panel</span>
+
+      <nav class="admin-nav" aria-label="Menu admin">
+        <% adminTabs.forEach(function (tab) { %>
+          <a href="<%= tab.key === 'overview' ? '/admin' : '/admin/' + tab.key %>" class="<%= activeTab === tab.key ? 'is-active' : '' %>">
+            <i data-lucide="<%= tab.icon %>"></i><span><%= tab.label %></span>
+          </a>
+        <% }); %>
+      </nav>
+
+      <div class="admin-sidebar-bottom">
+        <a class="admin-back-link" href="/dashboard"><i data-lucide="arrow-left"></i> Dashboard pengguna</a>
+        <div class="admin-profile">
+          <span class="admin-avatar"><%= initials(adminUser.name || adminUser.username) %></span>
+          <div><b><%= adminUser.name || adminUser.username %></b><small>@<%= adminUser.username %></small></div>
+          <form method="post" action="/logout">
+            <input type="hidden" name="_csrf" value="<%= csrf %>">
+            <button class="mini-copy" type="submit" aria-label="Logout"><i data-lucide="log-out"></i></button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <button class="admin-backdrop" id="adminBackdrop" type="button" aria-label="Tutup menu"></button>
+
+  <div class="admin-main">
+    <header class="admin-topbar">
+      <button class="dash-menu-btn" id="adminMenuBtn" type="button" aria-label="Buka menu"><i data-lucide="menu"></i></button>
+      <div class="admin-topbar-title">
+        <span class="eyebrow">ADMIN WORKSPACE</span>
+        <h1><%= (adminTabs.find(function (t) { return t.key === activeTab; }) || { label: 'Admin' }).label %></h1>
+      </div>
+      <div class="admin-topbar-actions">
+        <a class="topbar-link" href="/" target="_blank" rel="noopener"><i data-lucide="external-link"></i> Lihat situs</a>
+        <a class="topbar-link" href="/monitor"><i data-lucide="activity"></i> Monitor</a>
+        <span class="badge badge-green">Admin</span>
+      </div>
+    </header>
+
+    <main class="admin-content">
+      <%- include('tabs/' + activeTab) %>
+    </main>
+  </div>
+</div>
+
+<%- include('../partials/footer', { scripts: ['/js/admin.js'] }) %>

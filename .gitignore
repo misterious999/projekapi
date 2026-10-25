@@ -1,0 +1,28 @@
+# dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# environment & credentials
+.env
+.env.*
+!.env.example
+serviceAccountKey.json
+*-service-account.json
+firebase-service-account.json
+
+# runtime
+logs/
+*.log
+pids/
+*.pid
+tmp/
+.DS_Store
+
+# editor
+.vscode/
+.idea/
+
+# local backup of the previous app
+_legacy/

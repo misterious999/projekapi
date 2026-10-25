@@ -1,0 +1,164 @@
+<%- include('partials/head', { title, description, bodyClass }) %>
+<%- include('partials/nav') %>
+
+<main class="page-main monitor-main">
+  <section class="page-hero page-hero-small">
+    <div class="container">
+      <div class="monitor-title-row">
+        <div>
+          <span class="eyebrow"><span class="eyebrow-dot green"></span> LIVE MONITORING</span>
+          <h1>Status layanan <span class="text-gradient">real-time.</span></h1>
+          <p>Statistik request, latency, resource server, dan aktivitas terbaru. Diperbarui otomatis setiap 10 detik.</p>
+        </div>
+        <div class="monitor-actions">
+          <span class="live-pill"><span class="live-dot"></span> LIVE</span>
+          <button class="btn btn-ghost btn-sm" type="button" id="refreshMonitor"><i data-lucide="refresh-cw"></i> Refresh</button>
+          <a class="btn btn-primary btn-sm" href="/docs"><i data-lucide="book-open"></i> Docs</a>
+        </div>
+      </div>
+      <p class="monitor-updated">Terakhir diperbarui: <b id="monitorUpdated"><%= formatDateTime(data.generatedAt) %></b></p>
+    </div>
+  </section>
+
+  <section class="section section-tight">
+    <div class="container">
+      <div class="monitor-stats">
+        <article class="monitor-stat glass-card">
+          <span class="stat-icon"><i data-lucide="send"></i></span>
+          <div><small>Total requests</small><b id="monitorRequests"><%= formatNumber(data.totals.requests) %></b><span>all time</span></div>
+        </article>
+        <article class="monitor-stat glass-card">
+          <span class="stat-icon green"><i data-lucide="check-check"></i></span>
+          <div><small>Success rate</small><b id="monitorSuccess"><%= data.totals.successRate %>%</b><span><span id="monitorErrors"><%= formatNumber(data.totals.errors) %></span> error</span></div>
+        </article>
+        <article class="monitor-stat glass-card">
+          <span class="stat-icon violet"><i data-lucide="timer"></i></span>
+          <div><small>Avg latency</small><b id="monitorLatency"><%= formatNumber(data.totals.avgLatency) %>ms</b><span>server-side</span></div>
+        </article>
+        <article class="monitor-stat glass-card">
+          <span class="stat-icon amber"><i data-lucide="plug-zap"></i></span>
+          <div><small>Endpoints</small><b id="monitorEndpoints"><%= data.totals.endpoints %></b><span>aktif</span></div>
+        </article>
+        <article class="monitor-stat glass-card">
+          <span class="stat-icon blue"><i data-lucide="users"></i></span>
+          <div><small>Developer</small><b id="monitorUsers"><%= formatNumber(data.totals.users) %></b><span>terdaftar</span></div>
+        </article>
+      </div>
+
+      <div class="monitor-grid">
+        <section class="monitor-panel glass-card monitor-chart-panel">
+          <div class="panel-head"><div><span class="eyebrow">TRAFFIC</span><h2>Request 14 hari terakhir</h2></div><span class="badge badge-blue">Harian</span></div>
+          <div class="chart-wrap"><canvas id="monitorChart" height="240" aria-label="Grafik request 14 hari terakhir"></canvas></div>
+          <div class="chart-legend"><span><i class="legend-dot cyan"></i> Request</span><span><i class="legend-dot violet"></i> Error</span></div>
+        </section>
+
+        <section class="monitor-panel glass-card">
+          <div class="panel-head"><div><span class="eyebrow">RESOURCE</span><h2>Server</h2></div><span class="badge badge-green">Healthy</span></div>
+          <div class="resource-list">
+            <div class="resource-row">
+              <div class="resource-head"><span><i data-lucide="cpu"></i> CPU</span><b id="cpuValue"><%= data.metrics.cpu.percent %>%</b></div>
+              <div class="progress"><div class="progress-fill" id="cpuBar" style="width:<%= data.metrics.cpu.percent %>%"></div></div>
+              <small><%= data.metrics.cpu.cores %> core · load <span id="loadValue"><%= Number(data.metrics.cpu.load || 0).toFixed(2) %></span></small>
+            </div>
+            <div class="resource-row">
+              <div class="resource-head"><span><i data-lucide="memory-stick"></i> RAM</span><b id="ramValue"><%= data.metrics.memory.percent %>%</b></div>
+              <div class="progress violet"><div class="progress-fill" id="ramBar" style="width:<%= data.metrics.memory.percent %>%"></div></div>
+              <small id="ramMeta"><%= formatBytes(data.metrics.memory.used) %> / <%= formatBytes(data.metrics.memory.total) %></small>
+            </div>
+            <div class="resource-row">
+              <div class="resource-head"><span><i data-lucide="hard-drive"></i> Disk</span><b id="diskValue"><%= data.metrics.disk.percent %>%</b></div>
+              <div class="progress amber"><div class="progress-fill" id="diskBar" style="width:<%= data.metrics.disk.percent %>%"></div></div>
+              <small id="diskMeta"><%= formatBytes(data.metrics.disk.used) %> / <%= formatBytes(data.metrics.disk.total) %></small>
+            </div>
+          </div>
+          <div class="env-grid">
+            <div><span>Platform</span><b id="envPlatform"><%= data.system.platform %></b></div>
+            <div><span>Runtime</span><b id="envNode"><%= data.system.node %></b></div>
+            <div><span>Arch</span><b id="envArch"><%= data.system.arch %></b></div>
+            <div><span>Uptime</span><b id="envUptime"><%= formatUptime(data.system.uptime) %></b></div>
+          </div>
+        </section>
+
+        <section class="monitor-panel glass-card freelimit-mini">
+          <div class="panel-head"><div><span class="eyebrow">FREE LIMIT</span><h2>Kuota demo hari ini</h2></div><i data-lucide="gift"></i></div>
+          <div class="freelimit-big"><b id="freeRemaining"><%= formatNumber(data.freeLimit.remaining) %></b><span>/ <span id="freeLimit"><%= formatNumber(data.freeLimit.limit) %></span></span></div>
+          <div class="progress green"><div class="progress-fill" id="freeBar" style="width:<%= 100 - data.freeLimit.percent %>%"></div></div>
+          <p><span id="freeUsed"><%= formatNumber(data.freeLimit.used) %></span> request terpakai · reset <b id="freeReset"><%= formatDateTime(data.freeLimit.resetAt) %></b></p>
+          <div class="mini-code"><code>Authorization: Bearer FreeLimit</code><button type="button" data-copy="FreeLimit" aria-label="Copy"><i data-lucide="copy"></i></button></div>
+        </section>
+
+        <section class="monitor-panel glass-card">
+          <div class="panel-head"><div><span class="eyebrow">TOP ENDPOINTS</span><h2>Paling banyak dipanggil</h2></div></div>
+          <div class="top-list" id="topEndpointsList">
+            <% var maxTop = Math.max.apply(null, data.topEndpoints.map(function (e) { return e.requests; }).concat([1])); %>
+            <% if (data.topEndpoints.length) { %>
+              <% data.topEndpoints.forEach(function (item, index) { %>
+                <div class="top-row">
+                  <span class="top-rank"><%= index + 1 %></span>
+                  <div class="top-copy"><b><%= item.name %></b><small><%= item.path %></small><div class="progress"><div class="progress-fill" style="width:<%= Math.round((item.requests / maxTop) * 100) %>%"></div></div></div>
+                  <div class="top-value"><b><%= formatNumber(item.requests) %></b><small><%= item.successRate %>% · <%= item.avgLatency %>ms</small></div>
+                </div>
+              <% }); %>
+            <% } else { %>
+              <div class="empty-mini"><i data-lucide="bar-chart-3"></i><p>Belum ada request tercatat.</p></div>
+            <% } %>
+          </div>
+        </section>
+
+        <section class="monitor-panel glass-card">
+          <div class="panel-head"><div><span class="eyebrow">TOP USERS</span><h2>Pengguna paling aktif</h2></div></div>
+          <div class="top-list" id="topUsersList">
+            <% if (data.topUsers.length) { %>
+              <% data.topUsers.forEach(function (item, index) { %>
+                <div class="top-row">
+                  <span class="top-rank"><%= index + 1 %></span>
+                  <div class="top-copy"><b>@<%= item.username %></b><small><%= formatNumber(item.requests) %> request</small></div>
+                  <div class="top-value"><b><%= item.successRate %>%</b><small><%= item.avgLatency %>ms</small></div>
+                </div>
+              <% }); %>
+            <% } else { %>
+              <div class="empty-mini"><i data-lucide="users"></i><p>Belum ada data pengguna.</p></div>
+            <% } %>
+          </div>
+        </section>
+      </div>
+
+      <section class="monitor-panel glass-card live-feed-panel">
+        <div class="panel-head">
+          <div><span class="eyebrow">LIVE FEED</span><h2>Aktivitas terbaru</h2></div>
+          <div class="feed-meta"><span class="live-dot"></span> <span id="feedCount"><%= data.recent.length %></span> request terakhir</div>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table live-feed-table">
+            <thead><tr><th>Waktu</th><th>User</th><th>Endpoint</th><th>Status</th><th>Latency</th><th>IP</th></tr></thead>
+            <tbody id="liveFeedBody">
+              <% if (data.recent.length) { %>
+                <% data.recent.forEach(function (item) { %>
+                  <tr>
+                    <td><span class="mono"><%= timeAgo(item.createdAt) %></span></td>
+                    <td><b>@<%= item.username %></b></td>
+                    <td><code><%= item.endpoint %></code></td>
+                    <td><span class="status-code <%= item.status < 300 ? 'ok' : (item.status < 500 ? 'warn' : 'bad') %>"><%= item.status %></span></td>
+                    <td><%= item.ms %>ms</td>
+                    <td><span class="mono muted"><%= item.ip || '-' %></span></td>
+                  </tr>
+                <% }); %>
+              <% } else { %>
+                <tr><td colspan="6" class="table-empty">Belum ada aktivitas. Coba panggil endpoint untuk melihat feed live.</td></tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <div class="monitor-footnote">
+        <p><i data-lucide="info"></i> Statistik dihitung dari request yang melewati API. IP ditampilkan dalam bentuk ter-mask untuk privasi.</p>
+        <div class="status-legend"><span class="status-code ok">2xx</span> sukses <span class="status-code warn">4xx</span> client error <span class="status-code bad">5xx</span> server error</div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script type="application/json" id="monitorData"><%- JSON.stringify(data).replace(/</g, '\\u003c') %></script>
+
+<%- include('partials/footer', { scripts: ['/js/monitor.js'] }) %>

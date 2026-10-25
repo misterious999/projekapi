@@ -1,0 +1,38 @@
+<div class="admin-page-head">
+  <div>
+    <span class="eyebrow">PESAN KONTAK</span>
+    <h2>Pesan dari form publik.</h2>
+    <p>Balas melalui email atau WhatsApp. Tandai sudah dibaca setelah ditindaklanjuti.</p>
+  </div>
+  <div class="admin-page-actions"><span class="badge badge-gray"><%= messages.length %> pesan</span></div>
+</div>
+
+<% if (messages.length) { %>
+  <div class="admin-message-list">
+    <% messages.forEach(function (item) { %>
+      <article class="admin-message glass-card <%= item.status === 'new' ? 'is-new' : '' %>">
+        <div class="admin-message-head">
+          <div><span class="badge badge-<%= item.status === 'new' ? 'amber' : 'gray' %>"><%= item.status || 'new' %></span><h3><%= item.subject %></h3></div>
+          <span class="mono muted"><%= formatDateTime(item.createdAt) %></span>
+        </div>
+        <div class="admin-message-meta"><b><%= item.name %></b><a href="mailto:<%= item.email %>"><%= item.email %></a><span class="mono muted"><%= item.ip || '-' %></span></div>
+        <p><%= item.message %></p>
+        <div class="row-actions">
+          <a class="btn btn-outline btn-sm" href="mailto:<%= item.email %>?subject=<%= encodeURIComponent('Re: ' + item.subject) %>"><i data-lucide="reply"></i> Balas email</a>
+          <% if (item.status !== 'read') { %>
+            <form method="post" action="/admin/messages/<%= item.id %>/read">
+              <input type="hidden" name="_csrf" value="<%= csrf %>">
+              <button class="btn btn-ghost btn-sm" type="submit"><i data-lucide="check"></i> Tandai dibaca</button>
+            </form>
+          <% } %>
+          <form method="post" action="/admin/messages/<%= item.id %>/delete" data-confirm="Hapus pesan dari <%= item.name %>?">
+            <input type="hidden" name="_csrf" value="<%= csrf %>">
+            <button class="btn btn-danger btn-sm" type="submit"><i data-lucide="trash-2"></i> Hapus</button>
+          </form>
+        </div>
+      </article>
+    <% }); %>
+  </div>
+<% } else { %>
+  <div class="admin-panel glass-card"><div class="empty-state"><i data-lucide="mail"></i><h3>Belum ada pesan</h3><p>Pesan dari halaman kontak akan muncul di sini.</p></div></div>
+<% } %>

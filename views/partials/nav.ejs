@@ -1,0 +1,45 @@
+<header class="site-nav" id="siteNav">
+  <div class="nav-inner">
+    <a class="brand" href="/" aria-label="<%= app.name %> home">
+      <img src="/img/logo.svg" alt="" width="36" height="36">
+      <span class="brand-name">Nusa<strong>API</strong></span>
+    </a>
+
+    <nav class="nav-links" id="navLinks" aria-label="Navigasi utama">
+      <a href="/docs" class="<%= (currentPath || '').startsWith('/docs') ? 'is-active' : '' %>">Docs</a>
+      <a href="/monitor" class="<%= (currentPath || '').startsWith('/monitor') ? 'is-active' : '' %>">Monitor</a>
+      <a href="/pricing" class="<%= (currentPath || '').startsWith('/pricing') ? 'is-active' : '' %>">Harga</a>
+      <a href="/faq" class="<%= (currentPath || '').startsWith('/faq') ? 'is-active' : '' %>">FAQ</a>
+      <a href="/download" class="<%= (currentPath || '').startsWith('/download') ? 'is-active' : '' %>">Download</a>
+    </nav>
+
+    <div class="nav-actions">
+      <% if (typeof user !== 'undefined' && user) { %>
+        <% if (user.role === 'admin') { %><a class="nav-mini-link" href="/admin">Admin</a><% } %>
+        <a class="nav-account" href="/dashboard" title="Buka dashboard">
+          <% if (user.avatarUrl) { %>
+            <img src="<%= user.avatarUrl %>" alt="" class="nav-avatar" referrerpolicy="no-referrer">
+          <% } else { %>
+            <span class="nav-avatar nav-avatar-fallback"><%= initials(user.name || user.username) %></span>
+          <% } %>
+          <span class="nav-account-copy"><b><%= user.username %></b><small><%= user.planData ? user.planData.name : 'Free' %></small></span>
+        </a>
+      <% } else { %>
+        <a class="btn btn-ghost btn-sm" href="/login">Masuk</a>
+        <a class="btn btn-primary btn-sm" href="/register">Mulai gratis</a>
+      <% } %>
+      <button class="nav-toggle" id="navToggle" type="button" aria-label="Buka menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+<% if (typeof settings !== 'undefined' && settings && settings.announcement && settings.announcementActive !== false) { %>
+  <div class="announcement-bar" data-announcement data-announcement-key="<%= String(settings.announcement).length %>-<%= String(settings.announcement).slice(0, 16) %>">
+    <div class="announcement-inner">
+      <span class="announcement-dot"></span>
+      <p><%= settings.announcement %></p>
+      <button type="button" class="announcement-close" data-announcement-close aria-label="Tutup pengumuman">×</button>
+    </div>
+  </div>
+<% } %>

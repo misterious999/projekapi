@@ -1,0 +1,105 @@
+<%- include('partials/head', { title, description, bodyClass }) %>
+<%- include('partials/nav') %>
+
+<main class="page-main">
+  <section class="page-hero">
+    <div class="container">
+      <span class="eyebrow">HARGA & PAKET</span>
+      <h1>Bayar sesuai kebutuhan.<br><span class="text-gradient">Tanpa biaya tersembunyi.</span></h1>
+      <p>Mulai dari Free, upgrade ke paket berbayar saat project bertambah. Semua paket berbayar membuka seluruh endpoint dan kuota yang lebih besar.</p>
+      <div class="hero-chips">
+        <span><i data-lucide="check"></i> Akses semua endpoint</span>
+        <span><i data-lucide="check"></i> Custom API key</span>
+        <span><i data-lucide="check"></i> Support tiket</span>
+        <span><i data-lucide="check"></i> Tanpa auto-renew</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-tight">
+    <div class="container">
+      <div class="pricing-grid pricing-grid-all">
+        <% plans.forEach(function (plan) { %>
+          <article class="price-card glass-card <%= plan.popular ? 'is-popular' : '' %> <%= plan.bestValue ? 'is-best' : '' %>" id="plan-<%= plan.key %>">
+            <% if (plan.popular) { %><span class="price-ribbon">Paling populer</span><% } %>
+            <% if (plan.bestValue) { %><span class="price-ribbon best">Best value</span><% } %>
+            <div class="price-head">
+              <span class="price-icon"><i data-lucide="<%= plan.icon %>"></i></span>
+              <div><h3><%= plan.name %></h3><small><%= plan.label %></small></div>
+            </div>
+            <div class="price-amount"><%= plan.price === 0 ? 'Gratis' : formatIDR(plan.price) %><% if (plan.price > 0) { %><span>/<%= plan.days %> hari</span><% } %></div>
+            <p class="price-quota"><b><%= formatNumber(plan.quota) %></b> request · <%= plan.days ? plan.days + ' hari aktif' : 'tanpa masa aktif' %></p>
+            <ul class="price-features">
+              <% plan.features.forEach(function (feature) { %><li><i data-lucide="check"></i><%= feature %></li><% }); %>
+            </ul>
+            <% if (plan.key === 'free') { %>
+              <a class="btn btn-ghost btn-block" href="<%= user ? '/dashboard' : '/register' %>"><%= user ? 'Buka dashboard' : plan.cta %></a>
+            <% } else { %>
+              <a class="btn <%= plan.popular ? 'btn-primary' : 'btn-outline' %> btn-block" href="<%= user ? '/dashboard/billing?plan=' + plan.key : '/register?plan=' + plan.key %>"><%= plan.cta %></a>
+            <% } %>
+          </article>
+        <% }); %>
+      </div>
+      <p class="pricing-note"><i data-lucide="info"></i> Pembayaran dan aktivasi dilakukan manual melalui WhatsApp admin. Order dari dashboard untuk membuat ID transaksi.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <div><span class="eyebrow">PERBANDINGAN</span><h2>Detail setiap paket.</h2></div>
+        <p>Fitur yang sama untuk semua paket berbayar. Bedanya ada di kuota dan masa aktif.</p>
+      </div>
+      <div class="table-wrap glass-card">
+        <table class="data-table compare-table">
+          <thead>
+            <tr>
+              <th>Fitur</th>
+              <% plans.forEach(function (plan) { %><th><%= plan.name %></th><% }); %>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Harga</td><% plans.forEach(function (plan) { %><td><%= plan.price === 0 ? 'Gratis' : formatIDR(plan.price) %></td><% }); %></tr>
+            <tr><td>Kuota request</td><% plans.forEach(function (plan) { %><td><%= formatNumber(plan.quota) %></td><% }); %></tr>
+            <tr><td>Masa aktif</td><% plans.forEach(function (plan) { %><td><%= plan.days ? plan.days + ' hari' : 'Tanpa batas' %></td><% }); %></tr>
+            <tr><td>Semua endpoint</td><% plans.forEach(function (plan) { %><td><%= plan.allEndpoints ? '✓' : '—' %></td><% }); %></tr>
+            <tr><td>Custom API key</td><% plans.forEach(function (plan) { %><td><%= plan.customKey ? '✓' : '—' %></td><% }); %></tr>
+            <tr><td>Whitelist IP</td><% plans.forEach(function (plan) { %><td>✓</td><% }); %></tr>
+            <tr><td>Support tiket</td><% plans.forEach(function (plan) { %><td><%= plan.ticket ? '✓' : '—' %></td><% }); %></tr>
+            <tr><td>Prioritas layanan</td><% plans.forEach(function (plan) { %><td><%= plan.priority ? '✓' : '—' %></td><% }); %></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container faq-layout">
+      <div class="section-head section-head-left">
+        <span class="eyebrow">PERTANYAAN PAKET</span>
+        <h2>Hal yang perlu diketahui.</h2>
+        <p>Masih ragu? <a href="/contact">Hubungi admin</a>.</p>
+      </div>
+      <div class="faq-list">
+        <article class="faq-item glass-card is-open">
+          <button type="button" class="faq-question" aria-expanded="true"><span>Apakah kuota bisa habis sebelum masa aktif?</span><i data-lucide="chevron-down"></i></button>
+          <div class="faq-answer"><p>Bisa. Kuota dan masa aktif berjalan bersamaan. Request akan ditolak jika salah satunya habis. Kamu bisa upgrade atau redeem kode untuk menambah kuota.</p></div>
+        </article>
+        <article class="faq-item glass-card">
+          <button type="button" class="faq-question" aria-expanded="false"><span>Bagaimana cara upgrade paket?</span><i data-lucide="chevron-down"></i></button>
+          <div class="faq-answer"><p>Buka dashboard → Paket & Transaksi → pilih paket. Sistem membuat ID transaksi lalu mengarahkan ke WhatsApp admin. Setelah pembayaran dikonfirmasi, admin mengaktifkan paket.</p></div>
+        </article>
+        <article class="faq-item glass-card">
+          <button type="button" class="faq-question" aria-expanded="false"><span>Apakah ada refund?</span><i data-lucide="chevron-down"></i></button>
+          <div class="faq-answer"><p>Tidak ada refund untuk kuota, plan, atau benefit yang sudah aktif. Pastikan paket yang dipilih sudah sesuai sebelum melakukan pembayaran.</p></div>
+        </article>
+        <article class="faq-item glass-card">
+          <button type="button" class="faq-question" aria-expanded="false"><span>Apakah FreeLimit termasuk paket?</span><i data-lucide="chevron-down"></i></button>
+          <div class="faq-answer"><p>FreeLimit adalah kunci demo terpisah dengan 200 request/hari, bukan bagian dari paket akun. Free plan memberi 100 request total untuk akun baru.</p></div>
+        </article>
+      </div>
+    </div>
+  </section>
+</main>
+
+<%- include('partials/footer', { scripts: [] }) %>

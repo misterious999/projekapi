@@ -1,0 +1,41 @@
+<div class="admin-page-head">
+  <div>
+    <span class="eyebrow">TESTIMONI</span>
+    <h2>Moderasi testimoni.</h2>
+    <p>Sembunyikan testimoni dari landing page tanpa menghapus, atau hapus permanen jika melanggar aturan.</p>
+  </div>
+  <div class="admin-page-actions"><span class="badge badge-gray"><%= testimonials.length %> testimoni</span></div>
+</div>
+
+<% if (testimonials.length) { %>
+  <div class="admin-testimonial-grid">
+    <% testimonials.forEach(function (item) { %>
+      <article class="admin-testimonial glass-card <%= item.hidden ? 'is-hidden' : '' %>">
+        <div class="admin-testimonial-head">
+          <div class="testimonial-user">
+            <% if (item.avatarUrl) { %><img src="<%= item.avatarUrl %>" alt="" referrerpolicy="no-referrer"><% } else { %><span class="testimonial-avatar"><%= initials(item.name || item.username) %></span><% } %>
+            <div><b><%= item.name || item.username %></b><small>@<%= item.username %> · <%= item.plan ? item.plan.toUpperCase() : 'FREE' %></small></div>
+          </div>
+          <div class="stars"><%= '★'.repeat(item.rating) %><span><%= '★'.repeat(5 - item.rating) %></span></div>
+        </div>
+        <p><%= item.content %></p>
+        <div class="admin-testimonial-meta">
+          <span><%= formatDateTime(item.updatedAt || item.createdAt) %></span>
+          <span class="badge badge-<%= item.hidden ? 'gray' : 'green' %>"><%= item.hidden ? 'Disembunyikan' : 'Tayang' %></span>
+        </div>
+        <div class="row-actions">
+          <form method="post" action="/admin/testimonials/<%= item.uid %>/hide">
+            <input type="hidden" name="_csrf" value="<%= csrf %>">
+            <button class="btn btn-outline btn-sm" type="submit"><i data-lucide="<%= item.hidden ? 'eye' : 'eye-off' %>"></i> <%= item.hidden ? 'Tampilkan' : 'Sembunyikan' %></button>
+          </form>
+          <form method="post" action="/admin/testimonials/<%= item.uid %>/delete" data-confirm="Hapus testimoni @<%= item.username %> permanen?">
+            <input type="hidden" name="_csrf" value="<%= csrf %>">
+            <button class="btn btn-danger btn-sm" type="submit"><i data-lucide="trash-2"></i> Hapus</button>
+          </form>
+        </div>
+      </article>
+    <% }); %>
+  </div>
+<% } else { %>
+  <div class="admin-panel glass-card"><div class="empty-state"><i data-lucide="message-square-quote"></i><h3>Belum ada testimoni</h3><p>Testimoni pengguna akan muncul di sini untuk dimoderasi.</p></div></div>
+<% } %>

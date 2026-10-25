@@ -1,0 +1,19 @@
+<%- include('partials/head', { title, description: message, bodyClass: 'page-error' }) %>
+<%- include('partials/nav') %>
+
+<main class="error-main">
+  <div class="container">
+    <div class="error-card glass-card">
+      <span class="error-code"><%= status %></span>
+      <h1><%= status === 404 ? 'Halaman tidak ditemukan.' : 'Ada yang tidak beres.' %></h1>
+      <p><%= message %></p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="<%= backUrl || '/' %>"><i data-lucide="arrow-left"></i> Kembali</a>
+        <a class="btn btn-ghost" href="/docs">Buka dokumentasi</a>
+      </div>
+      <% if (status === 500) { %><p class="error-hint">Jika masalah berulang, hubungi admin dengan menyertakan waktu dan halaman yang diakses.</p><% } %>
+    </div>
+  </div>
+</main>
+
+<%- include('partials/footer', { scripts: [] }) %>

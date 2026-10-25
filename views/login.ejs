@@ -1,0 +1,73 @@
+<%- include('partials/head', { title, description, bodyClass }) %>
+
+<main class="auth-main">
+  <div class="auth-glow auth-glow-a" aria-hidden="true"></div>
+  <div class="auth-glow auth-glow-b" aria-hidden="true"></div>
+
+  <div class="auth-shell">
+    <section class="auth-aside">
+      <a class="brand" href="/">
+        <img src="/img/logo.svg" alt="" width="42" height="42">
+        <span class="brand-name">Nusa<strong>API</strong></span>
+      </a>
+      <h1>Masuk. Ambil key. <span class="text-gradient">Mulai request.</span></h1>
+      <p>Dashboard untuk mengelola API key, kuota, whitelist IP, tiket, dan riwayat pemakaian.</p>
+      <ul class="auth-points">
+        <li><i data-lucide="check-circle-2"></i> API key otomatis untuk akun baru</li>
+        <li><i data-lucide="check-circle-2"></i> Kuota dan masa aktif transparan</li>
+        <li><i data-lucide="check-circle-2"></i> Dokumentasi + tester di browser</li>
+        <li><i data-lucide="check-circle-2"></i> Monitoring dan log request</li>
+      </ul>
+      <div class="auth-quote glass-card">
+        <p>“Yang saya butuh cuma endpoint yang jelas dan kuota yang tidak bikin kaget.”</p>
+        <span>— prinsip desain NusaAPI</span>
+      </div>
+    </section>
+
+    <section class="auth-card glass-card">
+      <div class="auth-head">
+        <span class="eyebrow">SELAMAT DATANG</span>
+        <h2>Masuk ke akunmu</h2>
+        <p>Belum punya akun? <a href="/register<%= ref ? '?ref=' + encodeURIComponent(ref) : '' %>">Daftar gratis</a>.</p>
+      </div>
+
+      <% if (loggedOut) { %><div class="inline-note inline-note-success"><i data-lucide="check"></i> Kamu sudah logout. Sampai jumpa lagi!</div><% } %>
+      <% if (registered) { %><div class="inline-note inline-note-success"><i data-lucide="check"></i> Akun berhasil dibuat. Silakan masuk.</div><% } %>
+
+      <form method="post" action="/login" class="form auth-form">
+        <input type="hidden" name="_csrf" value="<%= csrf %>">
+        <input type="hidden" name="next" value="<%= next %>">
+        <label class="field">
+          <span>Email</span>
+          <div class="input-icon"><i data-lucide="mail"></i><input type="email" name="email" autocomplete="email" placeholder="nama@email.com" required autofocus></div>
+        </label>
+        <label class="field">
+          <span>Password</span>
+          <div class="input-icon"><i data-lucide="lock"></i><input type="password" name="password" id="loginPassword" autocomplete="current-password" placeholder="Masukkan password" required><button type="button" class="password-eye" data-toggle-password="loginPassword" aria-label="Lihat password"><i data-lucide="eye"></i></button></div>
+        </label>
+        <div class="form-between">
+          <label class="check-label"><input type="checkbox" name="remember" checked> Ingat sesi ini</label>
+          <a href="/forgot-password">Lupa password?</a>
+        </div>
+        <button class="btn btn-primary btn-block btn-lg" type="submit"><i data-lucide="log-in"></i> Masuk</button>
+      </form>
+
+      <div class="auth-divider"><span>atau lanjutkan dengan</span></div>
+      <div class="oauth-row">
+        <a class="btn btn-oauth <%= app.oauth.google.enabled ? '' : 'is-disabled' %>" href="/auth/google" title="<%= app.oauth.google.enabled ? 'Login dengan Google' : 'Belum dikonfigurasi' %>">
+          <span class="oauth-g">G</span> Google
+        </a>
+        <a class="btn btn-oauth <%= app.oauth.github.enabled ? '' : 'is-disabled' %>" href="/auth/github" title="<%= app.oauth.github.enabled ? 'Login dengan GitHub' : 'Belum dikonfigurasi' %>">
+          <i data-lucide="github"></i> GitHub
+        </a>
+      </div>
+      <% if (!app.oauth.google.enabled && !app.oauth.github.enabled) { %>
+        <p class="auth-hint"><i data-lucide="info"></i> Login sosial belum dikonfigurasi. Isi GOOGLE_CLIENT_ID/SECRET atau GITHUB_CLIENT_ID/SECRET di environment.</p>
+      <% } %>
+
+      <p class="auth-terms">Dengan masuk, kamu menyetujui <a href="/terms">Syarat & Ketentuan</a> dan <a href="/privacy">Kebijakan Privasi</a>.</p>
+    </section>
+  </div>
+</main>
+
+<%- include('partials/footer', { scripts: [] }) %>

@@ -1,0 +1,260 @@
+<%- include('partials/head', { title, description, bodyClass }) %>
+<%- include('partials/nav') %>
+
+<main class="docs-main">
+  <div class="container docs-shell">
+    <aside class="docs-sidebar glass-card" id="docsSidebar">
+      <div class="docs-sidebar-head">
+        <span class="eyebrow">API CONSOLE</span>
+        <h2>Dokumentasi</h2>
+        <p>v<%= app.version %> · REST API</p>
+      </div>
+      <label class="docs-search-field">
+        <i data-lucide="search"></i>
+        <input type="search" id="docsSearch" placeholder="Cari endpoint, path, kategori..." autocomplete="off">
+      </label>
+      <nav class="docs-nav">
+        <span class="docs-nav-label">Kategori</span>
+        <% categories.forEach(function (cat) { %>
+          <% var count = endpoints.filter(function (ep) { return ep.category === cat.key; }).length; %>
+          <a href="#cat-<%= cat.key %>" class="docs-nav-cat"><i data-lucide="<%= cat.icon %>"></i><span><%= cat.name %></span><em><%= count %></em></a>
+        <% }); %>
+        <span class="docs-nav-label">Panduan</span>
+        <a href="#docsAuth" class="docs-nav-cat"><i data-lucide="key-round"></i><span>Autentikasi</span></a>
+        <a href="#docsErrors" class="docs-nav-cat"><i data-lucide="triangle-alert"></i><span>Error & limit</span></a>
+        <a href="#docsTesterHelp" class="docs-nav-cat"><i data-lucide="terminal"></i><span>Tester</span></a>
+      </nav>
+      <div class="docs-sidebar-foot">
+        <% if (user) { %>
+          <div class="docs-mini-user">
+            <span class="mini-avatar"><%= initials(user.name || user.username) %></span>
+            <div><b><%= user.username %></b><small><%= user.planData ? user.planData.name : 'Free' %> plan</small></div>
+          </div>
+          <a class="btn btn-primary btn-block btn-sm" href="/dashboard/api"><i data-lucide="key-round"></i> Kelola API key</a>
+        <% } else { %>
+          <p>Butuh API key?</p>
+          <a class="btn btn-primary btn-block btn-sm" href="/register">Daftar gratis</a>
+        <% } %>
+      </div>
+    </aside>
+
+    <button class="docs-sidebar-toggle" id="docsSidebarToggle" type="button" aria-label="Buka navigasi docs"><i data-lucide="menu"></i> Menu docs</button>
+
+    <div class="docs-content">
+      <section class="docs-intro glass-card">
+        <div class="docs-intro-copy">
+          <span class="eyebrow"><span class="eyebrow-dot"></span> REST API v<%= app.version %></span>
+          <h1>Dokumentasi API</h1>
+          <p>Semua endpoint memakai JSON, autentikasi API key, dan format respons yang konsisten. Pilih kategori, buka detail endpoint, lalu coba langsung dari tester.</p>
+          <div class="docs-base">
+            <span>Base URL</span>
+            <code><%= app.url %></code>
+            <button type="button" data-copy="<%= app.url %>" aria-label="Copy base URL"><i data-lucide="copy"></i></button>
+          </div>
+          <div class="docs-quick-actions">
+            <% if (user) { %><a class="btn btn-primary btn-sm" href="/dashboard/api"><i data-lucide="key-round"></i> API key saya</a><% } else { %><a class="btn btn-primary btn-sm" href="/register">Dapatkan API key</a><% } %>
+            <a class="btn btn-ghost btn-sm" href="/monitor"><i data-lucide="activity"></i> Status live</a>
+            <a class="btn btn-ghost btn-sm" href="/pricing"><i data-lucide="tags"></i> Paket</a>
+          </div>
+        </div>
+        <div class="docs-intro-code">
+          <div class="mini-terminal">
+            <div class="mini-terminal-top"><span>Quick start</span><span class="method-pill">GET</span></div>
+            <pre><code><span class="t-muted">$</span> curl <%= app.url %>/api/tools/uuid \
+  -H "Authorization: Bearer YOUR_API_KEY"
+
+<span class="t-json">{
+  "status": true,
+  "data": { "uuids": ["..."] }
+}</span></code></pre>
+          </div>
+          <div class="docs-free-note"><i data-lucide="gift"></i><span>Tanpa akun? Pakai key <code>FreeLimit</code> (200 request/hari).</span></div>
+        </div>
+      </section>
+
+      <div class="docs-toolbar">
+        <div class="docs-toolbar-copy"><b><span id="docsVisibleCount"><%= endpoints.length %></span> endpoint</b><span>·</span><span>Semua respons JSON</span></div>
+        <div class="docs-filter-chips">
+          <button type="button" class="chip is-active" data-docs-filter="all">Semua</button>
+          <button type="button" class="chip" data-docs-filter="free">Free</button>
+          <button type="button" class="chip" data-docs-filter="paid">Berbayar</button>
+          <button type="button" class="chip" data-docs-filter="public">Publik</button>
+        </div>
+      </div>
+
+      <div id="docsCatalog">
+        <% categories.forEach(function (cat) { %>
+          <% var catEndpoints = endpoints.filter(function (ep) { return ep.category === cat.key; }); %>
+          <section class="docs-category" id="cat-<%= cat.key %>" data-category="<%= cat.key %>">
+            <div class="docs-category-head">
+              <span class="category-icon cat-<%= cat.color %>"><i data-lucide="<%= cat.icon %>"></i></span>
+              <div><h2><%= cat.name %></h2><p><%= cat.description %></p></div>
+              <span class="category-count"><%= catEndpoints.length %></span>
+            </div>
+            <div class="endpoint-grid">
+              <% catEndpoints.forEach(function (ep) { %>
+                <article class="endpoint-card glass-card" id="ep-<%= ep.id %>" data-endpoint="<%= ep.id %>" data-plan="<%= ep.minPlan %>" data-public="<%= ep.public ? '1' : '0' %>" data-search="<%= (ep.name + ' ' + ep.path + ' ' + ep.summary + ' ' + cat.name).toLowerCase() %>">
+                  <div class="endpoint-top">
+                    <span class="method-pill method-<%= ep.method.toLowerCase() %>"><%= ep.method %></span>
+                    <code><%= ep.path %></code>
+                    <button type="button" class="mini-copy" data-copy="<%= app.url + ep.path %>" aria-label="Copy URL"><i data-lucide="copy"></i></button>
+                  </div>
+                  <h3><%= ep.name %></h3>
+                  <p><%= ep.summary %></p>
+                  <div class="endpoint-meta">
+                    <span><i data-lucide="<%= ep.public ? 'globe' : 'lock' %>"></i> <%= ep.public ? 'Public' : 'API key' %></span>
+                    <span><i data-lucide="layers"></i> <%= ep.public ? 'Tanpa plan' : (ep.minPlan === 'free' ? 'Free+' : getPlan(ep.minPlan).name + '+') %></span>
+                    <span><i data-lucide="folder"></i> <%= cat.name %></span>
+                  </div>
+                  <button class="endpoint-open" type="button" data-open-endpoint="<%= ep.id %>">Detail & tester <i data-lucide="arrow-right"></i></button>
+                </article>
+              <% }); %>
+            </div>
+          </section>
+        <% }); %>
+        <div class="empty-state glass-card" id="docsEmpty" hidden>
+          <i data-lucide="search-x"></i>
+          <h3>Tidak ada endpoint cocok</h3>
+          <p>Coba kata kunci lain, misalnya <code>weather</code>, <code>qr</code>, atau <code>uuid</code>.</p>
+        </div>
+      </div>
+
+      <section class="endpoint-detail glass-card" id="endpointDetail" hidden>
+        <div class="endpoint-detail-head">
+          <button class="back-btn" type="button" id="closeEndpointDetail"><i data-lucide="arrow-left"></i> Kembali ke katalog</button>
+          <div class="endpoint-detail-title">
+            <span class="method-pill" id="detailMethod">GET</span>
+            <code id="detailPath">/api/...</code>
+            <button type="button" class="mini-copy" id="detailCopyPath" aria-label="Copy path"><i data-lucide="copy"></i></button>
+          </div>
+          <h2 id="detailName">Endpoint</h2>
+          <p id="detailSummary"></p>
+          <div class="endpoint-meta" id="detailMeta"></div>
+        </div>
+
+        <div class="endpoint-detail-grid">
+          <div class="endpoint-detail-main">
+            <section class="detail-section">
+              <h3>Deskripsi</h3>
+              <p id="detailDescription"></p>
+            </section>
+            <section class="detail-section">
+              <h3>Parameter</h3>
+              <div class="table-wrap">
+                <table class="data-table params-table">
+                  <thead><tr><th>Nama</th><th>Tipe</th><th>Wajib</th><th>Contoh</th><th>Keterangan</th></tr></thead>
+                  <tbody id="detailParams"></tbody>
+                </table>
+              </div>
+            </section>
+            <section class="detail-section">
+              <div class="code-tabs" role="tablist" aria-label="Contoh kode">
+                <button type="button" class="code-tab is-active" data-code-tab="curl">cURL</button>
+                <button type="button" class="code-tab" data-code-tab="javascript">JavaScript</button>
+                <button type="button" class="code-tab" data-code-tab="python">Python</button>
+                <button type="button" class="code-tab" data-code-tab="php">PHP</button>
+                <button type="button" class="code-tab" data-code-tab="node">Node.js</button>
+                <button type="button" class="mini-copy code-copy" id="detailCopyCode" aria-label="Copy code"><i data-lucide="copy"></i></button>
+              </div>
+              <pre class="code-block"><code id="detailCode"></code></pre>
+            </section>
+            <section class="detail-section">
+              <h3>Contoh respons</h3>
+              <pre class="code-block response-block"><code id="detailResponse"></code></pre>
+            </section>
+          </div>
+
+          <aside class="endpoint-detail-side">
+            <div class="tester-card">
+              <div class="tester-head"><h3><i data-lucide="terminal"></i> API Tester</h3><span class="badge badge-green" id="testerAuthBadge">API key</span></div>
+              <div id="docsTesterHelp" class="tester-help">Isi parameter dan API key, lalu kirim request langsung ke endpoint ini.</div>
+              <label class="field">
+                <span>API key</span>
+                <div class="tester-key-row">
+                  <input type="password" id="testerApiKey" placeholder="nusa_... atau FreeLimit" autocomplete="off">
+                  <% if (user) { %><button type="button" class="mini-copy" id="testerUseMyKey" title="Pakai API key akun saya"><i data-lucide="key-round"></i></button><% } %>
+                </div>
+              </label>
+              <div id="testerParams" class="tester-params"></div>
+              <button type="button" class="btn btn-primary btn-block" id="testerSend"><i data-lucide="play"></i> Kirim request</button>
+              <div class="tester-note">Request akan mengurangi kuota akun/FreeLimit kamu.</div>
+              <div class="tester-result" id="testerResult" hidden>
+                <div class="tester-result-head"><span id="testerStatus">200 OK</span><span id="testerTime">0ms</span></div>
+                <pre><code id="testerBody"></code></pre>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="docs-guide" id="docsAuth">
+        <div class="section-head section-head-left">
+          <span class="eyebrow">AUTENTIKASI</span>
+          <h2>Kirim API key dengan benar.</h2>
+          <p>Semua endpoint kecuali <code>/api/status</code> membutuhkan API key. Gunakan header, jangan query string.</p>
+        </div>
+        <div class="guide-grid">
+          <div class="glass-card guide-card">
+            <h3><i data-lucide="key-round"></i> Bearer token</h3>
+            <pre class="code-block"><code>Authorization: Bearer YOUR_API_KEY</code></pre>
+          </div>
+          <div class="glass-card guide-card">
+            <h3><i data-lucide="shield"></i> Alternatif header</h3>
+            <pre class="code-block"><code>X-API-Key: YOUR_API_KEY</code></pre>
+          </div>
+          <div class="glass-card guide-card">
+            <h3><i data-lucide="gift"></i> Demo key</h3>
+            <pre class="code-block"><code>Authorization: Bearer FreeLimit</code></pre>
+            <p>200 request/hari, reset 00.00 WITA, rate limit 20/menit per IP.</p>
+          </div>
+        </div>
+        <div class="glass-card guide-note">
+          <h3>Format respons</h3>
+          <pre class="code-block"><code>{
+  "status": true,
+  "code": 200,
+  "message": "success",
+  "data": { ... },
+  "meta": {
+    "requestId": "req_...",
+    "latencyMs": 42,
+    "quota": { "limit": 5000, "remaining": 4870 }
+  }
+}</code></pre>
+          <p>Simpan <code>requestId</code> jika perlu melapor. Header kuota juga dikirim: <code>X-Quota-Limit</code>, <code>X-Quota-Remaining</code>, <code>X-RateLimit-*</code>.</p>
+        </div>
+      </section>
+
+      <section class="docs-guide" id="docsErrors">
+        <div class="section-head section-head-left">
+          <span class="eyebrow">ERROR & LIMIT</span>
+          <h2>Status code yang akan kamu temui.</h2>
+        </div>
+        <div class="table-wrap glass-card">
+          <table class="data-table">
+            <thead><tr><th>Status</th><th>Arti</th><th>Yang harus dilakukan</th></tr></thead>
+            <tbody>
+              <tr><td><span class="badge badge-green">200</span></td><td>Request berhasil</td><td>Baca <code>data</code> pada respons.</td></tr>
+              <tr><td><span class="badge badge-amber">400</span></td><td>Parameter tidak valid</td><td>Cek tipe, format, dan field wajib.</td></tr>
+              <tr><td><span class="badge badge-red">401</span></td><td>API key hilang/tidak valid</td><td>Kirim header Authorization atau X-API-Key.</td></tr>
+              <tr><td><span class="badge badge-red">403</span></td><td>Plan, masa aktif, atau IP ditolak</td><td>Cek dashboard, perpanjang paket, atau whitelist IP.</td></tr>
+              <tr><td><span class="badge badge-amber">404</span></td><td>Endpoint/sumber tidak ditemukan</td><td>Cek path dan parameter.</td></tr>
+              <tr><td><span class="badge badge-amber">429</span></td><td>Rate limit atau kuota habis</td><td>Tunggu <code>Retry-After</code> atau upgrade/redeem.</td></tr>
+              <tr><td><span class="badge badge-red">500</span></td><td>Kesalahan server</td><td>Coba lagi; laporkan request ID jika berulang.</td></tr>
+              <tr><td><span class="badge badge-red">502/504</span></td><td>Upstream gagal/timeout</td><td>Coba lagi beberapa saat.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="docs-cta glass-card">
+        <div><span class="eyebrow">SIAP INTEGRASI?</span><h2>Ambil key, copy contoh, jalankan.</h2><p>Butuh bantuan? Buat tiket dari dashboard atau hubungi admin.</p></div>
+        <div class="hero-actions"><a class="btn btn-primary" href="<%= user ? '/dashboard/api' : '/register' %>"><%= user ? 'Kelola API key' : 'Daftar gratis' %></a><a class="btn btn-ghost" href="/contact">Hubungi admin</a></div>
+      </section>
+    </div>
+  </div>
+</main>
+
+<script type="application/json" id="docsData"><%- JSON.stringify(docsData).replace(/</g, '\\u003c') %></script>
+
+<%- include('partials/footer', { scripts: ['/js/docs.js'] }) %>

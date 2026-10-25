@@ -1,0 +1,67 @@
+<%- include('partials/head', { title, description, bodyClass }) %>
+<%- include('partials/nav') %>
+
+<main class="page-main">
+  <section class="page-hero">
+    <div class="container">
+      <span class="eyebrow">FAQ</span>
+      <h1>Jawaban singkat untuk<br><span class="text-gradient">pertanyaan yang sering muncul.</span></h1>
+      <p>Mulai dari autentikasi, kuota, sampai deployment. Kalau masih bingung, hubungi admin lewat WhatsApp atau tiket.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="/docs">Buka dokumentasi</a>
+        <a class="btn btn-ghost" href="/contact">Hubungi admin</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-tight">
+    <div class="container faq-layout faq-layout-wide">
+      <aside class="faq-aside">
+        <div class="glass-card faq-aside-card">
+          <span class="feature-icon"><i data-lucide="life-buoy"></i></span>
+          <h3>Butuh bantuan?</h3>
+          <p>Tiket support tersedia untuk paket berbayar. Untuk pertanyaan umum, WhatsApp admin adalah jalur tercepat.</p>
+          <a class="btn btn-primary btn-block" href="/contact">Kirim pesan</a>
+          <a class="btn btn-ghost btn-block" href="https://wa.me/<%= (settings && settings.waAdmin) || app.waAdmin %>" target="_blank" rel="noopener"><i data-lucide="message-circle"></i> WhatsApp</a>
+        </div>
+      </aside>
+
+      <div class="faq-list">
+        <article class="faq-item glass-card is-open">
+          <button type="button" class="faq-question" aria-expanded="true"><span>Bagaimana autentikasi API key bekerja?</span><i data-lucide="chevron-down"></i></button>
+          <div class="faq-answer"><p>Kirim key melalui header <code>Authorization: Bearer API_KEY</code> atau <code>X-API-Key: API_KEY</code>. Key terikat ke akun, plan, kuota, dan whitelist IP. Jangan pernah menaruh key di kode frontend publik.</p></div>
+        </article>
+        <article class="faq-item glass-card">
+          <button type="button" class="faq-question" aria-expanded="false"><span>Apakah FreeLimit sama dengan Free plan?</span><i data-lucide="chevron-down"></i></button>
+          <div class="faq-answer"><p>Berbeda. FreeLimit adalah key demo bersama dengan 200 request/hari yang reset tiap 00.00 WITA. Free plan adalah paket akun baru dengan 100 request total, tanpa masa aktif.</p></div>
+        </article>
+        <article class="faq-item glass-card">
+          <button type="button" class="faq-question" aria-expanded="false"><span>Kenapa request saya kena 401?</span><i data-lucide="chevron-down"></i></button>
+          <div class="faq-answer"><p>Kemungkinan key tidak dikirim, salah ketik, sudah dirotasi, atau bukan milik akun aktif. Cek header request dan copy ulang key dari dashboard.</p></div>
+        </article>
+        <article class="faq-item glass-card">
+          <button type="button" class="faq-question" aria-expanded="false"><span>Kenapa kena 403 padahal key valid?</span><i data-lucide="chevron-down"></i></button>
+          <div class="faq-answer"><p>Bisa karena paket tidak mencukupi, masa aktif habis, akun nonaktif, atau IP kamu tidak ada di whitelist. Pesan error menyertakan kode yang bisa dicek di dashboard.</p></div>
+        </article>
+        <article class="faq-item glass-card">
+          <button type="button" class="faq-question" aria-expanded="false"><span>Kenapa kena 429?</span><i data-lucide="chevron-down"></i></button>
+          <div class="faq-answer"><p>Request terlalu cepat (rate limit 120/menit untuk akun, 20/menit untuk FreeLimit) atau kuota habis. Untuk rate limit, tunggu sesuai header <code>Retry-After</code>. Untuk kuota, upgrade/redeem.</p></div>
+        </article>
+        <article class="faq-item glass-card">
+          <button type="button" class="faq-question" aria-expanded="false"><span>Apakah endpoint downloader mengunduh video?</span><i data-lucide="chevron-down"></i></button>
+          <div class="faq-answer"><p>Tidak. Endpoint downloader saat ini hanya mengambil metadata publik (judul, author, thumbnail) lewat oEmbed. Ini menghindari pelanggaran hak cipta dan penyalahgunaan bandwidth.</p></div>
+        </article>
+        <article class="faq-item glass-card">
+          <button type="button" class="faq-question" aria-expanded="false"><span>Bagaimana cara deploy platform ini?</span><i data-lucide="chevron-down"></i></button>
+          <div class="faq-answer"><p>Butuh proses Node.js yang persisten dan akses Firebase. Cocok di VPS, Railway, Render, atau Fly.io. Vercel serverless tidak disarankan untuk session dan rate limiter in-memory. Detail ada di README.</p></div>
+        </article>
+        <article class="faq-item glass-card">
+          <button type="button" class="faq-question" aria-expanded="false"><span>Apakah ada batas jumlah API key?</span><i data-lucide="chevron-down"></i></button>
+          <div class="faq-answer"><p>Satu API key aktif per akun. Key bisa dirotasi kapan saja. Custom key tersedia mulai paket Plus. Key lama langsung tidak berlaku setelah rotasi.</p></div>
+        </article>
+      </div>
+    </div>
+  </section>
+</main>
+
+<%- include('partials/footer', { scripts: [] }) %>

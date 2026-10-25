@@ -1,0 +1,14 @@
+node_modules
+npm-debug.log*
+.env
+.env.*
+!.env.example
+serviceAccountKey.json
+*-service-account.json
+firebase-service-account.json
+_legacy
+.git
+.gitignore
+logs
+*.log
+public/downloads/nusaapi-postman.json.tmp

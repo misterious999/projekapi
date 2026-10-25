@@ -1,0 +1,58 @@
+<%- include('partials/head', { title, description, bodyClass }) %>
+<%- include('partials/nav') %>
+
+<main class="page-main">
+  <section class="page-hero">
+    <div class="container">
+      <span class="eyebrow">KONTRIBUTOR</span>
+      <h1>Dibangun bersama,<br><span class="text-gradient">untuk developer Indonesia.</span></h1>
+      <p>NusaAPI terbuka untuk kontribusi dokumentasi, contoh integrasi, perbaikan bug, dan ide endpoint baru. Tidak perlu jadi expert untuk mulai.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="/contact">Ajukan kontribusi</a>
+        <a class="btn btn-ghost" href="/docs">Lihat dokumentasi</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-tight">
+    <div class="container">
+      <div class="contributor-grid">
+        <article class="contributor-card glass-card">
+          <span class="feature-icon"><i data-lucide="file-code-2"></i></span>
+          <h3>Contoh integrasi</h3>
+          <p>Kirim potongan kode untuk bot WhatsApp, Discord, Laravel, Next.js, atau automation lain.</p>
+        </article>
+        <article class="contributor-card glass-card">
+          <span class="feature-icon violet"><i data-lucide="book-open-check"></i></span>
+          <h3>Perbaikan docs</h3>
+          <p>Koreksi parameter, tambahkan contoh respons, atau jelaskan error handling dengan lebih jelas.</p>
+        </article>
+        <article class="contributor-card glass-card">
+          <span class="feature-icon green"><i data-lucide="bug"></i></span>
+          <h3>Laporan bug</h3>
+          <p>Sertakan request ID, endpoint, waktu kejadian, dan langkah reproduksi agar cepat ditelusuri.</p>
+        </article>
+        <article class="contributor-card glass-card">
+          <span class="feature-icon amber"><i data-lucide="lightbulb"></i></span>
+          <h3>Ide endpoint</h3>
+          <p>Usulkan endpoint yang benar-benar berguna dan bisa diakses secara legal oleh publik.</p>
+        </article>
+      </div>
+
+      <div class="contributor-note glass-card">
+        <div>
+          <span class="eyebrow">PRINSIP</span>
+          <h2>Yang kami utamakan.</h2>
+        </div>
+        <ul>
+          <li><i data-lucide="check"></i> Menghormati hak cipta dan privasi pengguna.</li>
+          <li><i data-lucide="check"></i> Tidak membantu scraping ilegal atau bypass keamanan.</li>
+          <li><i data-lucide="check"></i> Dokumentasi yang jujur tentang batasan layanan.</li>
+          <li><i data-lucide="check"></i> Kode yang mudah dibaca dan dipelihara.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</main>
+
+<%- include('partials/footer', { scripts: [] }) %>

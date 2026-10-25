@@ -1,0 +1,122 @@
+<%- include('../partials/dash-start', { title, description: 'Paket, kuota, dan riwayat transaksi NusaAPI.', active, user, planData, quota, settings, announcement }) %>
+
+<div class="dash-page-head">
+  <div>
+    <span class="eyebrow">PAKET & TRANSAKSI</span>
+    <h2>Kelola paket dan tagihan.</h2>
+    <p>Pembayaran dilakukan manual melalui WhatsApp admin. Paket aktif setelah pembayaran dikonfirmasi.</p>
+  </div>
+  <div class="dash-page-actions">
+    <a class="btn btn-ghost" href="/pricing"><i data-lucide="tags"></i> Perbandingan</a>
+    <a class="btn btn-primary" href="https://wa.me/<%= (settings && settings.waAdmin) || app.waAdmin %>" target="_blank" rel="noopener"><i data-lucide="message-circle"></i> WhatsApp admin</a>
+  </div>
+</div>
+
+<section class="current-plan-card glass-card">
+  <div class="current-plan-main">
+    <span class="price-icon"><i data-lucide="<%= planData.icon %>"></i></span>
+    <div>
+      <span class="eyebrow">PAKET AKTIF</span>
+      <h2><%= planData.name %></h2>
+      <p><%= planData.label %> · <%= formatNumber(quota.limit) %> request<% if (planData.days) { %> · aktif sampai <%= user.expiresAt ? formatDate(user.expiresAt) : '—' %><% } else { %> · tanpa masa aktif<% } %></p>
+    </div>
+  </div>
+  <div class="current-plan-stats">
+    <div><span>Sisa kuota</span><b><%= formatNumber(quota.remaining) %></b><div class="progress"><div class="progress-fill" style="width:<%= quota.percent %>%"></div></div></div>
+    <div><span>Terpakai</span><b><%= formatNumber(quota.used) %></b><small>dari <%= formatNumber(quota.limit) %></small></div>
+    <div><span>Status</span><b class="<%= user.expired ? 'text-red' : 'text-green' %>"><%= user.expired ? 'Expired' : 'Aktif' %></b><small><%= user.expiresAt ? formatDate(user.expiresAt) : 'Tanpa batas' %></small></div>
+  </div>
+</section>
+
+<section class="dash-panel glass-card">
+  <div class="panel-head"><div><span class="eyebrow">UPGRADE</span><h2>Pilih paket yang sesuai.</h2></div><span class="badge badge-blue">Manual activation</span></div>
+  <div class="billing-plan-grid">
+    <% plans.forEach(function (plan) { %>
+      <% var isCurrent = plan.key === user.plan; %>
+      <article class="billing-plan <%= isCurrent ? 'is-current' : '' %> <%= plan.popular ? 'is-popular' : '' %>">
+        <% if (plan.popular) { %><span class="price-ribbon">Populer</span><% } %>
+        <div class="billing-plan-head">
+          <span class="price-icon small"><i data-lucide="<%= plan.icon %>"></i></span>
+          <div><h3><%= plan.name %></h3><small><%= plan.label %></small></div>
+          <% if (isCurrent) { %><span class="badge badge-green">Aktif</span><% } %>
+        </div>
+        <div class="billing-price"><%= plan.price === 0 ? 'Gratis' : formatIDR(plan.price) %><% if (plan.price > 0) { %><span>/<%= plan.days %> hari</span><% } %></div>
+        <p class="billing-quota"><b><%= formatNumber(plan.quota) %></b> request</p>
+        <ul class="price-features small">
+          <% plan.features.slice(0, 4).forEach(function (feature) { %><li><i data-lucide="check"></i><%= feature %></li><% }); %>
+        </ul>
+        <% if (plan.key === 'free') { %>
+          <button class="btn btn-ghost btn-block btn-sm" type="button" disabled><%= isCurrent ? 'Paket saat ini' : 'Paket dasar' %></button>
+        <% } else { %>
+          <form method="post" action="/dashboard/billing/order" data-confirm="Buat order paket <%= plan.name %> sebesar <%= formatIDR(plan.price) %>? Kamu akan diarahkan ke WhatsApp admin.">
+            <input type="hidden" name="_csrf" value="<%= csrf %>">
+            <input type="hidden" name="plan" value="<%= plan.key %>">
+            <button class="btn <%= isCurrent ? 'btn-outline' : (plan.popular ? 'btn-primary' : 'btn-outline') %> btn-block btn-sm" type="submit">
+              <%= isCurrent ? 'Perpanjang' : (planRank(plan.key) > planRank(user.plan) ? 'Upgrade' : 'Pilih paket') %>
+            </button>
+          </form>
+        <% } %>
+      </article>
+    <% }); %>
+  </div>
+  <div class="billing-note">
+    <i data-lucide="info"></i>
+    <p>Order akan membuat transaksi berstatus <b>pending</b> dan membuka WhatsApp admin. Simpan ID transaksi saat menghubungi admin. Kuota paket baru ditambahkan setelah admin menyetujui pembayaran.</p>
+  </div>
+</section>
+
+<section class="dash-panel glass-card redeem-panel" id="redeem">
+  <div class="panel-head"><div><span class="eyebrow">REDEEM CODE</span><h2>Tukar kode promo.</h2></div><i data-lucide="gift"></i></div>
+  <div class="redeem-layout">
+    <form method="post" action="/dashboard/billing/redeem" class="form redeem-form">
+      <input type="hidden" name="_csrf" value="<%= csrf %>">
+      <label class="field">
+        <span>Kode redeem</span>
+        <input type="text" name="code" maxlength="40" placeholder="Contoh: NUSA2026" autocomplete="off" autocapitalize="characters" spellcheck="false" required>
+        <small class="field-hint">Kode tidak peka huruf besar/kecil. Setiap kode hanya bisa dipakai sekali per akun.</small>
+      </label>
+      <button class="btn btn-primary" type="submit"><i data-lucide="sparkles"></i> Tukar kode</button>
+    </form>
+    <div class="redeem-info">
+      <div><i data-lucide="gauge"></i><p><b>Bonus kuota</b><br>Menambah sisa kuota request tanpa mengubah paket aktif.</p></div>
+      <div><i data-lucide="calendar-plus"></i><p><b>Perpanjangan</b><br>Menambah masa aktif dari tanggal berakhir yang paling akhir.</p></div>
+      <div><i data-lucide="layers"></i><p><b>Upgrade plan</b><br>Mengaktifkan paket tertentu dan menambahkan kuota paket tersebut.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="dash-panel glass-card">
+  <div class="panel-head"><div><span class="eyebrow">RIWAYAT</span><h2>Transaksi kamu</h2></div><span class="badge badge-gray"><%= transactions.length %> transaksi</span></div>
+  <% if (transactions.length) { %>
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead><tr><th>ID</th><th>Paket</th><th>Tipe</th><th>Nominal</th><th>Status</th><th>Tanggal</th></tr></thead>
+        <tbody>
+          <% transactions.forEach(function (trx) { %>
+            <tr>
+              <td><code><%= trx.id %></code></td>
+              <td><b><%= trx.planName || trx.planKey %></b></td>
+              <td><%= trx.type === 'renew' ? 'Perpanjang' : 'Pembelian' %></td>
+              <td><%= formatIDR(trx.amount) %></td>
+              <td><span class="badge badge-<%= trx.status === 'approved' ? 'green' : (trx.status === 'pending' ? 'amber' : 'red') %>"><%= trx.status %></span></td>
+              <td><span class="mono muted"><%= formatDateTime(trx.createdAt) %></span></td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
+  <% } else { %>
+    <div class="empty-state small"><i data-lucide="receipt"></i><h3>Belum ada transaksi</h3><p>Order paket pertama kamu dengan tombol di atas.</p></div>
+  <% } %>
+</section>
+
+<section class="dash-panel glass-card">
+  <div class="panel-head"><div><span class="eyebrow">CATATAN</span><h2>Ketentuan paket</h2></div></div>
+  <div class="info-grid">
+    <div><i data-lucide="calendar-clock"></i><div><b>Masa aktif</b><p>Paket berbayar aktif sesuai jumlah hari. Perpanjangan menambah masa aktif dari tanggal berakhir yang paling akhir.</p></div></div>
+    <div><i data-lucide="gauge"></i><div><b>Kuota total</b><p>Kuota paket adalah total request, bukan per hari, dan tidak reset otomatis. Kuota baru ditambahkan saat order disetujui.</p></div></div>
+    <div><i data-lucide="shield-check"></i><div><b>Tanpa auto-renew</b><p>Tidak ada penagihan otomatis. Kamu memilih sendiri kapan ingin memperpanjang.</p></div></div>
+  </div>
+</section>
+
+<%- include('../partials/dash-end') %>

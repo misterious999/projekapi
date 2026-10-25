@@ -1,0 +1,66 @@
+<%- include('../partials/dash-start', { title, description: 'Kelola testimoni NusaAPI.', active, user, planData, quota, settings, announcement }) %>
+
+<div class="dash-page-head">
+  <div>
+    <span class="eyebrow">TESTIMONI</span>
+    <h2>Bagikan pengalamanmu.</h2>
+    <p>Testimoni tampil di landing page dengan nama dan plan kamu. Satu akun satu testimoni, bisa diperbarui kapan saja.</p>
+  </div>
+  <div class="dash-page-actions">
+    <a class="btn btn-ghost" href="/#testimonials"><i data-lucide="external-link"></i> Lihat di landing</a>
+  </div>
+</div>
+
+<div class="dash-grid dash-grid-2-1">
+  <section class="dash-panel glass-card">
+    <div class="panel-head"><div><span class="eyebrow">FORM</span><h2><%= testimonial ? 'Perbarui testimoni' : 'Tulis testimoni' %></h2></div><span class="badge badge-<%= testimonial && !testimonial.hidden ? 'green' : 'gray' %>"><%= testimonial ? (testimonial.hidden ? 'Ditinjau' : 'Tayang') : 'Belum ada' %></span></div>
+    <form method="post" action="/dashboard/testimonial" class="form">
+      <input type="hidden" name="_csrf" value="<%= csrf %>">
+      <div class="rating-input large" role="radiogroup" aria-label="Rating">
+        <% [5,4,3,2,1].forEach(function (n) { %>
+          <input type="radio" id="dash-rating-<%= n %>" name="rating" value="<%= n %>" <%= (testimonial ? testimonial.rating : 5) === n ? 'checked' : '' %>>
+          <label for="dash-rating-<%= n %>" title="<%= n %> bintang">★</label>
+        <% }); %>
+      </div>
+      <label class="field">
+        <span>Testimoni</span>
+        <textarea name="content" rows="7" minlength="10" maxlength="800" placeholder="Ceritakan endpoint favoritmu, kemudahan integrasi, atau pengalaman dengan support..." required><%= testimonial ? testimonial.content : '' %></textarea>
+        <small class="field-hint">Minimal 10 karakter, maksimal 800. Jangan sertakan API key atau data sensitif.</small>
+      </label>
+      <button class="btn btn-primary" type="submit"><i data-lucide="send"></i> <%= testimonial ? 'Perbarui testimoni' : 'Kirim testimoni' %></button>
+    </form>
+  </section>
+
+  <aside class="dash-stack">
+    <section class="dash-panel glass-card">
+      <div class="panel-head"><div><span class="eyebrow">PREVIEW</span><h2>Tampilan publik</h2></div></div>
+      <% if (testimonial) { %>
+        <article class="testimonial-card preview-card">
+          <div class="testimonial-top">
+            <div class="testimonial-user">
+              <% if (user.avatarUrl) { %><img src="<%= user.avatarUrl %>" alt="" referrerpolicy="no-referrer"><% } else { %><span class="testimonial-avatar"><%= initials(user.name || user.username) %></span><% } %>
+              <div><b><%= user.name || user.username %></b><small>@<%= user.username %> · <%= planData.name.toUpperCase() %></small></div>
+            </div>
+            <div class="stars" aria-label="<%= testimonial.rating %> dari 5 bintang"><%= '★'.repeat(testimonial.rating) %><span><%= '★'.repeat(5 - testimonial.rating) %></span></div>
+          </div>
+          <p><%= testimonial.content %></p>
+          <div class="testimonial-foot"><i data-lucide="badge-check"></i> Terverifikasi · <%= formatDate(testimonial.updatedAt || testimonial.createdAt) %></div>
+        </article>
+      <% } else { %>
+        <div class="empty-mini"><i data-lucide="message-square-quote"></i><p>Preview akan muncul setelah kamu mengirim testimoni.</p></div>
+      <% } %>
+    </section>
+
+    <section class="dash-panel glass-card">
+      <div class="panel-head"><div><span class="eyebrow">TIPS</span><h2>Testimoni yang membantu</h2></div></div>
+      <ul class="check-list">
+        <li><i data-lucide="check"></i> Sebutkan endpoint atau fitur yang kamu pakai.</li>
+        <li><i data-lucide="check"></i> Jelaskan dampaknya ke project kamu.</li>
+        <li><i data-lucide="check"></i> Jujur soal plus dan minus.</li>
+        <li><i data-lucide="check"></i> Jangan bagikan data pribadi atau key.</li>
+      </ul>
+    </section>
+  </aside>
+</div>
+
+<%- include('../partials/dash-end') %>

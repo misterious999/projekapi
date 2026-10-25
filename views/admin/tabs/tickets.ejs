@@ -1,0 +1,73 @@
+<div class="admin-page-head">
+  <div>
+    <span class="eyebrow">TIKET</span>
+    <h2>Balas dan kelola tiket.</h2>
+    <p>Balasan admin akan mengubah status tiket menjadi answered dan terlihat oleh pengguna.</p>
+  </div>
+  <div class="admin-page-actions">
+    <a class="btn btn-ghost" href="/admin/tickets?status=open"><i data-lucide="inbox"></i> Open</a>
+    <a class="btn btn-ghost" href="/admin/tickets?status=answered"><i data-lucide="check-check"></i> Answered</a>
+  </div>
+</div>
+
+<div class="admin-grid admin-grid-tickets">
+  <aside class="admin-panel glass-card ticket-list admin-ticket-list">
+    <div class="panel-head"><div><span class="eyebrow">DAFTAR</span><h2>Tiket</h2></div><span class="badge badge-gray"><%= tickets.length %></span></div>
+    <div class="chip-row">
+      <a class="chip <%= !status ? 'is-active' : '' %>" href="/admin/tickets">Semua</a>
+      <a class="chip <%= status === 'open' ? 'is-active' : '' %>" href="/admin/tickets?status=open">Open</a>
+      <a class="chip <%= status === 'answered' ? 'is-active' : '' %>" href="/admin/tickets?status=answered">Answered</a>
+      <a class="chip <%= status === 'closed' ? 'is-active' : '' %>" href="/admin/tickets?status=closed">Closed</a>
+    </div>
+    <% if (tickets.length) { %>
+      <% tickets.forEach(function (ticket) { %>
+        <a class="ticket-item <%= selected && selected.id === ticket.id ? 'is-active' : '' %>" href="/admin/tickets?ticket=<%= ticket.id %><%= status ? '&status=' + status : '' %>">
+          <div class="ticket-item-top"><b><%= ticket.subject %></b><span class="badge badge-<%= ticket.status === 'closed' ? 'gray' : (ticket.status === 'answered' ? 'green' : 'amber') %>"><%= ticket.status %></span></div>
+          <p>@<%= ticket.username %> · <%= timeAgo(ticket.updatedAt) %><% if (ticket.priority === 'high') { %> · <span class="text-red">prioritas tinggi</span><% } %></p>
+        </a>
+      <% }); %>
+    <% } else { %><div class="empty-mini small"><i data-lucide="inbox"></i><p>Tidak ada tiket.</p></div><% } %>
+  </aside>
+
+  <section class="admin-panel glass-card ticket-detail">
+    <% if (selected) { %>
+      <% var replies = Object.entries(selected.replies || {}).map(function (entry) { return { id: entry[0], ...entry[1] }; }).sort(function (a, b) { return Number(a.createdAt || 0) - Number(b.createdAt || 0); }); %>
+      <div class="ticket-detail-head">
+        <div>
+          <div class="ticket-title-row"><h2><%= selected.subject %></h2><span class="badge badge-<%= selected.status === 'closed' ? 'gray' : (selected.status === 'answered' ? 'green' : 'amber') %>"><%= selected.status %></span></div>
+          <p><code><%= selected.id %></code> · <a href="/admin/users?edit=<%= selected.uid %>">@<%= selected.username %></a> · <%= selected.email %></p>
+        </div>
+        <form method="post" action="/admin/tickets/<%= selected.id %>/status" class="inline-form">
+          <input type="hidden" name="_csrf" value="<%= csrf %>">
+          <select name="status">
+            <option value="open" <%= selected.status === 'open' ? 'selected' : '' %>>Open</option>
+            <option value="answered" <%= selected.status === 'answered' ? 'selected' : '' %>>Answered</option>
+            <option value="closed" <%= selected.status === 'closed' ? 'selected' : '' %>>Closed</option>
+          </select>
+          <button class="btn btn-outline btn-sm" type="submit">Ubah status</button>
+        </form>
+      </div>
+
+      <div class="ticket-thread">
+        <% replies.forEach(function (reply) { %>
+          <div class="ticket-message <%= reply.by === 'admin' ? 'is-admin' : 'is-user' %>">
+            <div class="ticket-message-head"><span class="ticket-avatar"><%= initials(reply.byName || 'Admin') %></span><div><b><%= reply.byName || (reply.by === 'admin' ? 'Admin' : selected.username) %></b><small><%= reply.by === 'admin' ? 'Admin' : 'User' %> · <%= formatDateTime(reply.createdAt) %></small></div></div>
+            <p><%= reply.message %></p>
+          </div>
+        <% }); %>
+      </div>
+
+      <% if (selected.status !== 'closed') { %>
+        <form method="post" action="/admin/tickets/<%= selected.id %>/reply" class="form ticket-reply-form">
+          <input type="hidden" name="_csrf" value="<%= csrf %>">
+          <label class="field"><span>Balasan admin</span><textarea name="message" rows="4" maxlength="4000" placeholder="Tulis balasan untuk user..." required></textarea></label>
+          <button class="btn btn-primary" type="submit"><i data-lucide="send"></i> Kirim balasan</button>
+        </form>
+      <% } else { %>
+        <div class="inline-note"><i data-lucide="lock"></i> Tiket sudah ditutup. Ubah status ke open untuk membalas.</div>
+      <% } %>
+    <% } else { %>
+      <div class="empty-state"><i data-lucide="life-buoy"></i><h3>Pilih tiket</h3><p>Pilih tiket dari daftar untuk melihat percakapan.</p></div>
+    <% } %>
+  </section>
+</div>

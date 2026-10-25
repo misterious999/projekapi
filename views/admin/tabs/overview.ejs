@@ -1,0 +1,114 @@
+<div class="admin-page-head">
+  <div>
+    <span class="eyebrow">RINGKASAN</span>
+    <h2>Selamat datang, <%= adminUser.name || adminUser.username %>.</h2>
+    <p>Pantau pengguna, transaksi, tiket, dan trafik API dari satu panel.</p>
+  </div>
+  <div class="admin-page-actions">
+    <a class="btn btn-ghost" href="/admin/users"><i data-lucide="users"></i> Kelola user</a>
+    <a class="btn btn-primary" href="/admin/transactions?status=pending"><i data-lucide="receipt"></i> Transaksi pending</a>
+  </div>
+</div>
+
+<div class="admin-stat-grid">
+  <article class="admin-stat glass-card">
+    <span class="stat-icon"><i data-lucide="users"></i></span>
+    <div><small>Total pengguna</small><b><%= formatNumber(stats.totalUsers) %></b><span><%= stats.onlineUsers %> online · <%= stats.paidUsers %> berbayar</span></div>
+  </article>
+  <article class="admin-stat glass-card">
+    <span class="stat-icon green"><i data-lucide="wallet"></i></span>
+    <div><small>Pendapatan disetujui</small><b><%= formatIDR(stats.revenue) %></b><span>dari transaksi approved</span></div>
+  </article>
+  <article class="admin-stat glass-card">
+    <span class="stat-icon amber"><i data-lucide="clock"></i></span>
+    <div><small>Transaksi pending</small><b><%= formatNumber(stats.pendingTransactions) %></b><span>menunggu konfirmasi</span></div>
+  </article>
+  <article class="admin-stat glass-card">
+    <span class="stat-icon red"><i data-lucide="life-buoy"></i></span>
+    <div><small>Tiket terbuka</small><b><%= formatNumber(stats.openTickets) %></b><span><%= stats.expiredUsers %> user expired</span></div>
+  </article>
+  <article class="admin-stat glass-card">
+    <span class="stat-icon violet"><i data-lucide="send"></i></span>
+    <div><small>Total request API</small><b><%= formatNumber(stats.totalRequests) %></b><span>seluruh waktu</span></div>
+  </article>
+  <article class="admin-stat glass-card">
+    <span class="stat-icon blue"><i data-lucide="check-check"></i></span>
+    <div><small>Success rate</small><b><%= stats.successRate %>%</b><span>dari request tercatat</span></div>
+  </article>
+</div>
+
+<div class="admin-grid admin-grid-2">
+  <section class="admin-panel glass-card">
+    <div class="panel-head"><div><span class="eyebrow">PENGGUNA BARU</span><h2>Registrasi terakhir</h2></div><a class="link-arrow" href="/admin/users">Semua <i data-lucide="arrow-right"></i></a></div>
+    <% if (recentUsers.length) { %>
+      <div class="table-wrap">
+        <table class="data-table compact-table">
+          <thead><tr><th>User</th><th>Plan</th><th>Status</th><th>Bergabung</th></tr></thead>
+          <tbody>
+            <% recentUsers.forEach(function (u) { %>
+              <tr>
+                <td><a class="table-user" href="/admin/users?edit=<%= u.uid %>"><span class="mini-avatar"><%= initials(u.name || u.username) %></span><span><b><%= u.username %></b><small><%= u.email %></small></span></a></td>
+                <td><span class="plan-badge plan-<%= u.plan %>"><%= u.planData.name %></span></td>
+                <td><span class="badge badge-<%= u.isActive === false ? 'red' : (u.expired ? 'amber' : 'green') %>"><%= u.isActive === false ? 'Nonaktif' : (u.expired ? 'Expired' : 'Aktif') %></span></td>
+                <td><span class="mono muted"><%= formatDate(u.createdAt) %></span></td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+    <% } else { %><div class="empty-mini"><i data-lucide="users"></i><p>Belum ada pengguna.</p></div><% } %>
+  </section>
+
+  <section class="admin-panel glass-card">
+    <div class="panel-head"><div><span class="eyebrow">TRANSAKSI</span><h2>Menunggu konfirmasi</h2></div><a class="link-arrow" href="/admin/transactions?status=pending">Semua <i data-lucide="arrow-right"></i></a></div>
+    <% if (recentTransactions.length) { %>
+      <div class="list-stack">
+        <% recentTransactions.forEach(function (trx) { %>
+          <div class="list-row">
+            <span class="list-icon"><i data-lucide="receipt"></i></span>
+            <div class="list-copy"><b>@<%= trx.username %> · <%= trx.planName %></b><small><%= trx.id %> · <%= formatDate(trx.createdAt) %></small></div>
+            <div class="list-value"><b><%= formatIDR(trx.amount) %></b><span class="badge badge-<%= trx.status === 'approved' ? 'green' : (trx.status === 'pending' ? 'amber' : 'red') %>"><%= trx.status %></span></div>
+          </div>
+        <% }); %>
+      </div>
+    <% } else { %><div class="empty-mini"><i data-lucide="receipt"></i><p>Tidak ada transaksi pending.</p></div><% } %>
+  </section>
+</div>
+
+<div class="admin-grid admin-grid-2">
+  <section class="admin-panel glass-card">
+    <div class="panel-head"><div><span class="eyebrow">TIKET</span><h2>Perlu dibalas</h2></div><a class="link-arrow" href="/admin/tickets">Semua <i data-lucide="arrow-right"></i></a></div>
+    <% if (recentTickets.length) { %>
+      <div class="list-stack">
+        <% recentTickets.forEach(function (ticket) { %>
+          <a class="list-row list-link" href="/admin/tickets?ticket=<%= ticket.id %>">
+            <span class="list-icon"><i data-lucide="life-buoy"></i></span>
+            <div class="list-copy"><b><%= ticket.subject %></b><small>@<%= ticket.username %> · <%= timeAgo(ticket.updatedAt) %></small></div>
+            <span class="badge badge-<%= ticket.priority === 'high' ? 'red' : 'amber' %>"><%= ticket.priority %></span>
+          </a>
+        <% }); %>
+      </div>
+    <% } else { %><div class="empty-mini"><i data-lucide="check-check"></i><p>Tidak ada tiket terbuka.</p></div><% } %>
+  </section>
+
+  <section class="admin-panel glass-card">
+    <div class="panel-head"><div><span class="eyebrow">AKTIVITAS API</span><h2>Request terbaru</h2></div><a class="link-arrow" href="/monitor">Monitor <i data-lucide="arrow-right"></i></a></div>
+    <% if (recentLogs.length) { %>
+      <div class="table-wrap">
+        <table class="data-table compact-table">
+          <thead><tr><th>User</th><th>Endpoint</th><th>Status</th><th>Waktu</th></tr></thead>
+          <tbody>
+            <% recentLogs.forEach(function (log) { %>
+              <tr>
+                <td><b>@<%= log.username %></b></td>
+                <td><code><%= log.endpoint %></code></td>
+                <td><span class="status-code <%= log.status < 300 ? 'ok' : (log.status < 500 ? 'warn' : 'bad') %>"><%= log.status %></span></td>
+                <td><span class="mono muted"><%= timeAgo(log.createdAt) %></span></td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+    <% } else { %><div class="empty-mini"><i data-lucide="activity"></i><p>Belum ada request API.</p></div><% } %>
+  </section>
+</div>

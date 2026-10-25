@@ -1,0 +1,160 @@
+<%- include('../partials/dash-start', { title, description: 'Ringkasan akun, kuota, pemakaian API, dan transaksi NusaAPI.', active, user, planData, quota, settings, announcement }) %>
+
+<div class="dash-page-head">
+  <div>
+    <span class="eyebrow">RINGKASAN</span>
+    <h2>Halo, <%= user.name || user.username %> 👋</h2>
+    <p>Ini status akun dan pemakaian API kamu hari ini. Semua request tercatat otomatis.</p>
+  </div>
+  <div class="dash-page-actions">
+    <a class="btn btn-ghost" href="/docs"><i data-lucide="book-open"></i> Dokumentasi</a>
+    <a class="btn btn-primary" href="/dashboard/api"><i data-lucide="key-round"></i> API key</a>
+  </div>
+</div>
+
+<div class="dash-stat-grid">
+  <article class="dash-stat glass-card">
+    <div class="dash-stat-top"><span class="stat-icon"><i data-lucide="gauge"></i></span><span class="badge badge-blue"><%= planData.name %></span></div>
+    <small>Sisa kuota</small>
+    <b><%= formatNumber(quota.remaining) %></b>
+    <div class="progress"><div class="progress-fill" style="width:<%= quota.percent %>%"></div></div>
+    <span><%= formatNumber(quota.used) %> / <%= formatNumber(quota.limit) %> terpakai</span>
+  </article>
+  <article class="dash-stat glass-card">
+    <div class="dash-stat-top"><span class="stat-icon green"><i data-lucide="send"></i></span><span class="badge badge-green">Live</span></div>
+    <small>Request tercatat</small>
+    <b><%= formatNumber(usageSeries.reduce(function (sum, item) { return sum + item.requests; }, 0)) %></b>
+    <span>14 hari terakhir · <b><%= formatNumber(usageSeries.reduce(function (sum, item) { return sum + item.errors; }, 0)) %></b> error</span>
+  </article>
+  <article class="dash-stat glass-card">
+    <div class="dash-stat-top"><span class="stat-icon violet"><i data-lucide="calendar-clock"></i></span></div>
+    <small>Masa aktif</small>
+    <% if (user.expiresAt) { %>
+      <b data-countdown data-expiry="<%= user.expiresAt %>"><span data-countdown-text>—</span></b>
+      <span>Berakhir <%= formatDate(user.expiresAt) %></span>
+    <% } else { %>
+      <b>Tanpa batas</b>
+      <span>Free plan · tanpa masa aktif</span>
+    <% } %>
+  </article>
+  <article class="dash-stat glass-card">
+    <div class="dash-stat-top"><span class="stat-icon amber"><i data-lucide="users"></i></span></div>
+    <small>Referral</small>
+    <b><%= formatNumber(referral.totalReferrals) %></b>
+    <span>Bonus <b><%= formatNumber(referral.totalBonus) %></b> request</span>
+  </article>
+</div>
+
+<div class="dash-grid dash-grid-2-1">
+  <section class="dash-panel glass-card">
+    <div class="panel-head">
+      <div><span class="eyebrow">PEMAKAIAN</span><h2>Tren request 14 hari</h2></div>
+      <a class="link-arrow" href="/dashboard/api">Detail kuota <i data-lucide="arrow-right"></i></a>
+    </div>
+    <div class="chart-wrap dash-chart"><canvas id="usageChart" height="220" aria-label="Grafik pemakaian API"></canvas></div>
+    <div class="chart-legend"><span><i class="legend-dot cyan"></i> Request</span><span><i class="legend-dot violet"></i> Error</span></div>
+  </section>
+
+  <aside class="dash-panel glass-card">
+    <div class="panel-head"><div><span class="eyebrow">QUICK START</span><h2>Request pertama</h2></div></div>
+    <p class="muted-text">Gunakan API key dari dashboard. Jangan simpan di frontend publik.</p>
+    <div class="mini-code code-stack">
+      <code>curl <%= app.url %>/api/tools/uuid \
+  -H "Authorization: Bearer YOUR_API_KEY"</code>
+      <button type="button" data-copy='curl <%= app.url %>/api/tools/uuid -H "Authorization: Bearer YOUR_API_KEY"' aria-label="Copy contoh"><i data-lucide="copy"></i></button>
+    </div>
+    <div class="dash-quick-links">
+      <a href="/docs#ep-ai-chat"><i data-lucide="sparkles"></i><span><b>AI Chat</b><small>Uji model AI</small></span><i data-lucide="chevron-right"></i></a>
+      <a href="/docs#ep-weather"><i data-lucide="cloud-sun"></i><span><b>Cuaca</b><small>Data real-time</small></span><i data-lucide="chevron-right"></i></a>
+      <a href="/docs#ep-qr"><i data-lucide="qr-code"></i><span><b>QR Code</b><small>Generate PNG</small></span><i data-lucide="chevron-right"></i></a>
+    </div>
+  </aside>
+</div>
+
+<div class="dash-grid dash-grid-2">
+  <section class="dash-panel glass-card">
+    <div class="panel-head"><div><span class="eyebrow">AKTIVITAS</span><h2>Request terbaru</h2></div><a class="link-arrow" href="/monitor">Monitor <i data-lucide="arrow-right"></i></a></div>
+    <% if (recentRequests.length) { %>
+      <div class="table-wrap">
+        <table class="data-table compact-table">
+          <thead><tr><th>Endpoint</th><th>Status</th><th>Latency</th><th>Waktu</th></tr></thead>
+          <tbody>
+            <% recentRequests.forEach(function (log) { var ep = endpoints.find(function (e) { return e.id === log.endpointId; }); %>
+              <tr>
+                <td><code><%= ep ? ep.path.replace('/api', '') : log.endpointId %></code></td>
+                <td><span class="status-code <%= log.status < 300 ? 'ok' : (log.status < 500 ? 'warn' : 'bad') %>"><%= log.status %></span></td>
+                <td><%= log.ms %>ms</td>
+                <td><span class="mono muted"><%= timeAgo(log.createdAt) %></span></td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+    <% } else { %>
+      <div class="empty-mini"><i data-lucide="terminal"></i><p>Belum ada request. Coba endpoint pertama kamu dari dokumentasi.</p><a class="btn btn-ghost btn-sm" href="/docs">Buka docs</a></div>
+    <% } %>
+  </section>
+
+  <section class="dash-panel glass-card">
+    <div class="panel-head"><div><span class="eyebrow">TAGIHAN</span><h2>Transaksi terakhir</h2></div><a class="link-arrow" href="/dashboard/billing">Semua <i data-lucide="arrow-right"></i></a></div>
+    <% if (transactions.length) { %>
+      <div class="list-stack">
+        <% transactions.forEach(function (trx) { %>
+          <div class="list-row">
+            <span class="list-icon"><i data-lucide="receipt"></i></span>
+            <div class="list-copy"><b><%= trx.planName || trx.planKey %></b><small><%= trx.id %> · <%= formatDate(trx.createdAt) %></small></div>
+            <div class="list-value"><b><%= formatIDR(trx.amount) %></b><span class="badge badge-<%= trx.status === 'approved' ? 'green' : (trx.status === 'pending' ? 'amber' : 'red') %>"><%= trx.status %></span></div>
+          </div>
+        <% }); %>
+      </div>
+    <% } else { %>
+      <div class="empty-mini"><i data-lucide="receipt"></i><p>Belum ada transaksi. Upgrade paket saat kamu butuh kuota lebih.</p><a class="btn btn-ghost btn-sm" href="/dashboard/billing">Lihat paket</a></div>
+    <% } %>
+  </section>
+</div>
+
+<div class="dash-grid dash-grid-2">
+  <section class="dash-panel glass-card">
+    <div class="panel-head"><div><span class="eyebrow">SUPPORT</span><h2>Tiket terakhir</h2></div><a class="link-arrow" href="/dashboard/tickets">Semua <i data-lucide="arrow-right"></i></a></div>
+    <% if (tickets.length) { %>
+      <div class="list-stack">
+        <% tickets.forEach(function (ticket) { %>
+          <a class="list-row list-link" href="/dashboard/tickets?ticket=<%= ticket.id %>">
+            <span class="list-icon"><i data-lucide="life-buoy"></i></span>
+            <div class="list-copy"><b><%= ticket.subject %></b><small><%= Object.keys(ticket.replies || {}).length %> balasan · <%= timeAgo(ticket.updatedAt) %></small></div>
+            <span class="badge badge-<%= ticket.status === 'closed' ? 'gray' : (ticket.status === 'answered' ? 'green' : 'amber') %>"><%= ticket.status %></span>
+          </a>
+        <% }); %>
+      </div>
+    <% } else { %>
+      <div class="empty-mini"><i data-lucide="message-circle"></i><p>Belum ada tiket. Ada kendala? Buat tiket agar dibantu admin.</p><a class="btn btn-ghost btn-sm" href="/dashboard/tickets">Buat tiket</a></div>
+    <% } %>
+  </section>
+
+  <section class="dash-panel glass-card referral-mini">
+    <div class="panel-head"><div><span class="eyebrow">REFERRAL</span><h2>Ajak teman, dapat bonus.</h2></div><i data-lucide="gift"></i></div>
+    <p>Bagikan kode referral kamu. Setiap teman yang mendaftar dan upgrade, kamu mendapat bonus kuota.</p>
+    <div class="referral-code-row">
+      <code><%= referral.code %></code>
+      <button type="button" data-copy="<%= referral.code %>" class="mini-copy" aria-label="Copy kode referral"><i data-lucide="copy"></i></button>
+    </div>
+    <div class="referral-mini-stats"><div><b><%= referral.totalReferrals %></b><span>teman</span></div><div><b><%= formatNumber(referral.totalBonus) %></b><span>bonus request</span></div></div>
+    <a class="btn btn-ghost btn-block" href="/dashboard/referral">Kelola referral <i data-lucide="arrow-right"></i></a>
+  </section>
+</div>
+
+<% if (!recentRequests.length || !testimonial) { %>
+  <section class="dash-panel glass-card onboarding-panel">
+    <div class="onboarding-head"><div><span class="eyebrow">CHECKLIST</span><h2>Selesaikan setup akun</h2></div><span class="badge badge-blue"><%= testimonial ? '4' : '3' %> langkah</span></div>
+    <div class="checklist">
+      <div class="checklist-item is-done"><i data-lucide="check-circle-2"></i><div><b>Buat akun</b><small>Akun aktif sejak <%= formatDate(user.createdAt) %></small></div></div>
+      <div class="checklist-item is-done"><i data-lucide="check-circle-2"></i><div><b>API key dibuat</b><small>Key siap dipakai di dashboard API.</small></div></div>
+      <a class="checklist-item <%= recentRequests.length ? 'is-done' : '' %>" href="/docs"><i data-lucide="<%= recentRequests.length ? 'check-circle-2' : 'circle' %>"></i><div><b>Panggil endpoint pertama</b><small>Gunakan tester dokumentasi atau cURL.</small></div><i data-lucide="arrow-right"></i></a>
+      <a class="checklist-item <%= testimonial ? 'is-done' : '' %>" href="/dashboard/testimonial"><i data-lucide="<%= testimonial ? 'check-circle-2' : 'circle' %>"></i><div><b>Bagikan testimoni</b><small>Bantu developer lain menemukan NusaAPI.</small></div><i data-lucide="arrow-right"></i></a>
+    </div>
+  </section>
+<% } %>
+
+<script type="application/json" id="overviewUsage"><%- JSON.stringify(usageSeries).replace(/</g, '\\u003c') %></script>
+
+<%- include('../partials/dash-end') %>

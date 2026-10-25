@@ -1,0 +1,88 @@
+<%- include('../partials/dash-start', { title, description: 'Tiket support NusaAPI.', active, user, planData, quota, settings, announcement }) %>
+
+<div class="dash-page-head">
+  <div>
+    <span class="eyebrow">SUPPORT</span>
+    <h2>Tiket support.</h2>
+    <p>Buat tiket untuk kendala teknis, aktivasi paket, atau pertanyaan akun. Admin akan membalas di halaman ini.</p>
+  </div>
+  <div class="dash-page-actions">
+    <a class="btn btn-ghost" href="/faq"><i data-lucide="circle-help"></i> FAQ</a>
+    <button class="btn btn-primary" type="button" data-toggle-new-ticket><i data-lucide="plus"></i> Tiket baru</button>
+  </div>
+</div>
+
+<section class="dash-panel glass-card" id="newTicketPanel" hidden>
+  <div class="panel-head"><div><span class="eyebrow">TIKET BARU</span><h2>Ceritakan kendalamu.</h2></div><button type="button" class="mini-copy" data-toggle-new-ticket aria-label="Tutup"><i data-lucide="x"></i></button></div>
+  <form method="post" action="/dashboard/tickets" class="form">
+    <input type="hidden" name="_csrf" value="<%= csrf %>">
+    <div class="form-grid">
+      <label class="field"><span>Subjek</span><input type="text" name="subject" minlength="5" maxlength="120" placeholder="Contoh: Request AI error 500" required></label>
+      <label class="field"><span>Prioritas</span><select name="priority"><option value="normal">Normal</option><option value="high">Tinggi</option><option value="low">Rendah</option></select></label>
+    </div>
+    <label class="field"><span>Pesan</span><textarea name="message" rows="5" maxlength="4000" minlength="10" placeholder="Sertakan endpoint, request ID, waktu kejadian, dan langkah reproduksi..." required></textarea></label>
+    <button class="btn btn-primary" type="submit"><i data-lucide="send"></i> Kirim tiket</button>
+  </form>
+</section>
+
+<div class="ticket-layout">
+  <aside class="ticket-list glass-card">
+    <div class="ticket-list-head"><h3>Daftar tiket</h3><span class="badge badge-gray"><%= tickets.length %></span></div>
+    <% if (tickets.length) { %>
+      <% tickets.forEach(function (ticket) { %>
+        <a class="ticket-item <%= selected && selected.id === ticket.id ? 'is-active' : '' %>" href="/dashboard/tickets?ticket=<%= ticket.id %>">
+          <div class="ticket-item-top"><b><%= ticket.subject %></b><span class="badge badge-<%= ticket.status === 'closed' ? 'gray' : (ticket.status === 'answered' ? 'green' : 'amber') %>"><%= ticket.status %></span></div>
+          <p><%= Object.keys(ticket.replies || {}).length %> balasan · <%= timeAgo(ticket.updatedAt) %></p>
+        </a>
+      <% }); %>
+    <% } else { %>
+      <div class="empty-mini small"><i data-lucide="inbox"></i><p>Belum ada tiket.</p></div>
+    <% } %>
+  </aside>
+
+  <section class="ticket-detail glass-card">
+    <% if (selected) { %>
+      <% var replies = Object.entries(selected.replies || {}).map(function (entry) { return { id: entry[0], ...entry[1] }; }).sort(function (a, b) { return Number(a.createdAt || 0) - Number(b.createdAt || 0); }); %>
+      <div class="ticket-detail-head">
+        <div>
+          <div class="ticket-title-row"><h2><%= selected.subject %></h2><span class="badge badge-<%= selected.status === 'closed' ? 'gray' : (selected.status === 'answered' ? 'green' : 'amber') %>"><%= selected.status %></span></div>
+          <p><code><%= selected.id %></code> · dibuat <%= formatDateTime(selected.createdAt) %> · prioritas <%= selected.priority %></p>
+        </div>
+        <% if (selected.status !== 'closed') { %>
+          <form method="post" action="/dashboard/tickets/<%= selected.id %>/close" data-confirm="Tutup tiket ini? Kamu masih bisa membuka tiket baru.">
+            <input type="hidden" name="_csrf" value="<%= csrf %>">
+            <button class="btn btn-ghost btn-sm" type="submit">Tutup tiket</button>
+          </form>
+        <% } %>
+      </div>
+
+      <div class="ticket-thread">
+        <% replies.forEach(function (reply) { %>
+          <div class="ticket-message <%= reply.by === 'admin' ? 'is-admin' : 'is-user' %>">
+            <div class="ticket-message-head"><span class="ticket-avatar"><%= initials(reply.byName || (reply.by === 'admin' ? 'Admin' : user.username)) %></span><div><b><%= reply.byName || (reply.by === 'admin' ? 'Admin' : user.username) %></b><small><%= reply.by === 'admin' ? 'Admin' : 'Kamu' %> · <%= formatDateTime(reply.createdAt) %></small></div></div>
+            <p><%= reply.message %></p>
+          </div>
+        <% }); %>
+      </div>
+
+      <% if (selected.status !== 'closed') { %>
+        <form method="post" action="/dashboard/tickets/<%= selected.id %>/reply" class="form ticket-reply-form">
+          <input type="hidden" name="_csrf" value="<%= csrf %>">
+          <label class="field"><span>Balasan</span><textarea name="message" rows="3" maxlength="4000" placeholder="Tulis balasan..." required></textarea></label>
+          <button class="btn btn-primary" type="submit"><i data-lucide="send"></i> Kirim balasan</button>
+        </form>
+      <% } else { %>
+        <div class="inline-note"><i data-lucide="lock"></i> Tiket ini sudah ditutup. Buat tiket baru jika masih ada kendala.</div>
+      <% } %>
+    <% } else { %>
+      <div class="empty-state">
+        <i data-lucide="life-buoy"></i>
+        <h3>Belum ada tiket dipilih</h3>
+        <p>Buat tiket baru atau pilih tiket dari daftar di samping.</p>
+        <button class="btn btn-primary" type="button" data-toggle-new-ticket>Buat tiket</button>
+      </div>
+    <% } %>
+  </section>
+</div>
+
+<%- include('../partials/dash-end') %>

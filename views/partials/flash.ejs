@@ -1,0 +1,11 @@
+<div class="toast-stack" id="toastStack" aria-live="polite">
+  <% if (typeof flash !== 'undefined' && flash) { %>
+    <div class="toast toast-<%= flash.type || 'info' %>" role="status" data-toast>
+      <span class="toast-icon">
+        <% if (flash.type === 'success') { %>✓<% } else if (flash.type === 'error') { %>!<% } else { %>i<% } %>
+      </span>
+      <div class="toast-copy"><%= flash.message %></div>
+      <button class="toast-close" type="button" data-toast-close aria-label="Tutup">×</button>
+    </div>
+  <% } %>
+</div>

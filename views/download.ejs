@@ -1,0 +1,63 @@
+<%- include('partials/head', { title, description, bodyClass }) %>
+<%- include('partials/nav') %>
+
+<main class="page-main">
+  <section class="page-hero">
+    <div class="container">
+      <span class="eyebrow">DOWNLOAD</span>
+      <h1>Aplikasi resmi<br><span class="text-gradient">untuk workflow kamu.</span></h1>
+      <p>Koleksi Postman, CLI, dan alat bantu lain yang mempercepat integrasi. Semua file disediakan langsung dari platform ini.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="/docs">Buka dokumentasi</a>
+        <a class="btn btn-ghost" href="/monitor">Status layanan</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-tight">
+    <div class="container">
+      <% if (apps.length) { %>
+        <div class="download-grid">
+          <% apps.forEach(function (item) { %>
+            <article class="download-card glass-card">
+              <div class="download-top">
+                <span class="app-icon"><i data-lucide="<%= item.icon || 'package' %>"></i></span>
+                <span class="badge badge-green">Tersedia</span>
+              </div>
+              <h3><%= item.name %></h3>
+              <p><%= item.description %></p>
+              <div class="download-meta">
+                <span><i data-lucide="monitor"></i> <%= item.platform || 'Universal' %></span>
+                <span><i data-lucide="tag"></i> v<%= item.version || '1.0.0' %></span>
+                <% if (item.size) { %><span><i data-lucide="hard-drive"></i> <%= item.size %></span><% } %>
+              </div>
+              <a class="btn btn-primary btn-block" href="<%= item.url %>" <%= item.url.startsWith('http') ? 'target="_blank" rel="noopener"' : 'download' %>><i data-lucide="download"></i> Download</a>
+            </article>
+          <% }); %>
+        </div>
+      <% } else { %>
+        <div class="empty-state glass-card">
+          <i data-lucide="package-open"></i>
+          <h3>Belum ada aplikasi</h3>
+          <p>Admin belum menambahkan file download. Sementara itu, gunakan dokumentasi untuk mulai integrasi.</p>
+          <a class="btn btn-primary" href="/docs">Buka docs</a>
+        </div>
+      <% } %>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <div><span class="eyebrow">CARA PAKAI</span><h2>Download, import, jalankan.</h2></div>
+      </div>
+      <div class="steps-grid">
+        <article class="step-card glass-card"><span class="step-num">01</span><h3>Download file</h3><p>Pilih aplikasi yang sesuai dengan tools kamu.</p></article>
+        <article class="step-card glass-card"><span class="step-num">02</span><h3>Isi API key</h3><p>Ganti placeholder <code>YOUR_API_KEY</code> dengan key dari dashboard.</p></article>
+        <article class="step-card glass-card"><span class="step-num">03</span><h3>Jalankan</h3><p>Import ke Postman atau jalankan CLI dengan Node.js 18+.</p></article>
+      </div>
+    </div>
+  </section>
+</main>
+
+<%- include('partials/footer', { scripts: [] }) %>

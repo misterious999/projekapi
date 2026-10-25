@@ -1,0 +1,74 @@
+<div class="admin-page-head">
+  <div>
+    <span class="eyebrow">REDEEM CODE</span>
+    <h2>Kode promo dan bonus.</h2>
+    <p>Buat kode untuk menambah kuota, memperpanjang masa aktif, atau mengaktifkan plan tertentu.</p>
+  </div>
+</div>
+
+<div class="admin-grid admin-grid-2">
+  <section class="admin-panel glass-card">
+    <div class="panel-head"><div><span class="eyebrow">BUAT</span><h2>Kode baru</h2></div><i data-lucide="gift"></i></div>
+    <form method="post" action="/admin/redeem" class="form">
+      <input type="hidden" name="_csrf" value="<%= csrf %>">
+      <div class="form-grid">
+        <label class="field"><span>Kode</span><input type="text" name="code" maxlength="40" placeholder="NUSA2026" required></label>
+        <label class="field"><span>Tipe</span><select name="type" id="redeemType"><option value="quota">Tambah kuota</option><option value="days">Tambah hari</option><option value="plan">Aktifkan plan</option></select></label>
+      </div>
+      <div class="form-grid">
+        <label class="field"><span>Nilai</span><input type="text" name="value" id="redeemValue" placeholder="1000 / 30 / plus" required><small class="field-hint" id="redeemHint">Jumlah request untuk tipe kuota.</small></label>
+        <label class="field"><span>Maks. pemakaian</span><input type="number" name="maxUses" min="1" max="100000" value="1" required></label>
+      </div>
+      <label class="field"><span>Berlaku sampai <small>(opsional)</small></span><input type="date" name="expiresAt"></label>
+      <label class="field"><span>Catatan</span><input type="text" name="note" maxlength="160" placeholder="Promo komunitas, kompensasi, dll."></label>
+      <button class="btn btn-primary" type="submit"><i data-lucide="plus"></i> Buat kode</button>
+    </form>
+  </section>
+
+  <section class="admin-panel glass-card">
+    <div class="panel-head"><div><span class="eyebrow">REFERENSI</span><h2>Tipe redeem</h2></div></div>
+    <div class="info-grid single">
+      <div><i data-lucide="gauge"></i><div><b>Quota</b><p>Menambah <code>quotaLimit</code> user sebanyak nilai. Contoh nilai: <code>1000</code>.</p></div></div>
+      <div><i data-lucide="calendar-plus"></i><div><b>Days</b><p>Memperpanjang masa aktif dari tanggal terakhir. Contoh nilai: <code>30</code>.</p></div></div>
+      <div><i data-lucide="layers"></i><div><b>Plan</b><p>Mengaktifkan plan sesuai key. Contoh nilai: <code>plus</code>, <code>pro</code>, <code>ultimate</code>.</p></div></div>
+    </div>
+    <div class="inline-note"><i data-lucide="info"></i> Kode disimpan uppercase. Pengguna menukarkan kode dari halaman <b>Paket & Transaksi</b> di dashboard. Setiap akun hanya bisa memakai kode yang sama satu kali.</div>
+  </section>
+</div>
+
+<section class="admin-panel glass-card">
+  <div class="panel-head"><div><span class="eyebrow">DAFTAR</span><h2>Kode redeem</h2></div><span class="badge badge-gray"><%= codes.length %> kode</span></div>
+  <% if (codes.length) { %>
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead><tr><th>Kode</th><th>Tipe</th><th>Nilai</th><th>Pemakaian</th><th>Berlaku</th><th>Status</th><th>Aksi</th></tr></thead>
+        <tbody>
+          <% codes.forEach(function (item) { %>
+            <tr>
+              <td><code><%= item.code %></code><% if (item.note) { %><small class="table-sub"><%= item.note %></small><% } %></td>
+              <td><%= item.type %></td>
+              <td><b><%= item.type === 'plan' ? getPlan(item.value).name : (item.type === 'quota' ? formatNumber(item.value) + ' request' : item.value + ' hari') %></b></td>
+              <td><%= item.uses || 0 %> / <%= item.maxUses || 1 %></td>
+              <td><span class="mono muted"><%= item.expiresAt ? formatDate(item.expiresAt) : 'Tanpa batas' %></span></td>
+              <td><span class="badge badge-<%= item.active === false ? 'red' : 'green' %>"><%= item.active === false ? 'Nonaktif' : 'Aktif' %></span></td>
+              <td>
+                <div class="row-actions">
+                  <form method="post" action="/admin/redeem/<%= item.code %>/toggle">
+                    <input type="hidden" name="_csrf" value="<%= csrf %>">
+                    <button class="mini-copy" type="submit" title="<%= item.active === false ? 'Aktifkan' : 'Nonaktifkan' %>"><i data-lucide="<%= item.active === false ? 'toggle-right' : 'toggle-left' %>"></i></button>
+                  </form>
+                  <form method="post" action="/admin/redeem/<%= item.code %>/delete" data-confirm="Hapus kode <%= item.code %>?">
+                    <input type="hidden" name="_csrf" value="<%= csrf %>">
+                    <button class="mini-copy danger" type="submit" title="Hapus"><i data-lucide="trash-2"></i></button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+          <% }); %>
+        </tbody>
+      </table>
+    </div>
+  <% } else { %>
+    <div class="empty-state small"><i data-lucide="gift"></i><h3>Belum ada kode</h3><p>Buat kode pertama dengan form di atas.</p></div>
+  <% } %>
+</section>

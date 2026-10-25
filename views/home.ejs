@@ -1,0 +1,415 @@
+<%- include('partials/head', { title, description, bodyClass }) %>
+<%- include('partials/nav') %>
+
+<main class="home-main">
+  <section class="hero">
+    <div class="hero-glow hero-glow-a" aria-hidden="true"></div>
+    <div class="hero-glow hero-glow-b" aria-hidden="true"></div>
+    <div class="container hero-grid">
+      <div class="hero-copy">
+        <span class="eyebrow"><span class="eyebrow-dot"></span> REST API PUBLIK · API KEY</span>
+        <h1>Satu API.<br><span class="text-gradient">Semua kebutuhan project.</span></h1>
+        <p class="hero-lead">
+          Daftar, dapatkan API key, lalu panggil endpoint AI, tools, downloader metadata, network, dan maker.
+          Kuota transparan, dokumentasi siap copy-paste, dan monitoring live dalam satu platform.
+        </p>
+        <div class="hero-actions">
+          <% if (user) { %>
+            <a class="btn btn-primary btn-lg" href="/dashboard"><i data-lucide="layout-dashboard"></i> Buka dashboard</a>
+            <a class="btn btn-ghost btn-lg" href="/docs"><i data-lucide="book-open"></i> Dokumentasi</a>
+          <% } else { %>
+            <a class="btn btn-primary btn-lg" href="/register"><i data-lucide="sparkles"></i> Daftar gratis</a>
+            <a class="btn btn-ghost btn-lg" href="/docs"><i data-lucide="book-open"></i> Lihat dokumentasi</a>
+          <% } %>
+        </div>
+        <div class="hero-chips">
+          <span><i data-lucide="key-round"></i> API key otomatis</span>
+          <span><i data-lucide="gauge"></i> Kuota jelas</span>
+          <span><i data-lucide="activity"></i> Monitor live</span>
+          <span><i data-lucide="code-2"></i> 5 contoh bahasa</span>
+        </div>
+      </div>
+
+      <div class="hero-visual">
+        <div class="terminal-card glass-card" data-terminal>
+          <div class="terminal-top">
+            <span class="terminal-dots"><i></i><i></i><i></i></span>
+            <code>/api/ai/chat?q=Halo</code>
+            <span class="method-pill">GET</span>
+          </div>
+          <pre class="terminal-body"><code><span class="t-muted">$</span> <span data-terminal-command>curl "https://api.nusaapi.local/api/ai/chat?q=Halo" \
+  -H "Authorization: Bearer nusa_••••••••"</span><span class="t-caret"></span>
+
+<span class="t-ok" data-terminal-status>200 OK</span>
+<span class="t-json" data-terminal-response>{
+  "status": true,
+  "data": {
+    "answer": "Halo! Ada yang bisa dibantu?",
+    "model": "nusa-fast"
+  }
+}</span></code></pre>
+          <div class="terminal-foot">
+            <span class="live-dot"></span>
+            <span>Dokumentasi + tester interaktif</span>
+            <a href="/docs">Coba sekarang <i data-lucide="arrow-right"></i></a>
+          </div>
+        </div>
+
+        <div class="float-chip float-chip-a glass-card">
+          <span class="float-icon"><i data-lucide="zap"></i></span>
+          <div><b><%= stats.successRate %>%</b><small>success rate</small></div>
+        </div>
+        <div class="float-chip float-chip-b glass-card">
+          <span class="float-icon violet"><i data-lucide="layers"></i></span>
+          <div><b><%= endpointCount %></b><small>endpoint aktif</small></div>
+        </div>
+        <div class="float-chip float-chip-c glass-card">
+          <span class="float-icon green"><i data-lucide="users"></i></span>
+          <div><b><%= formatNumber(stats.users) %></b><small>developer</small></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="hero-stats glass-card">
+        <div class="hero-stat">
+          <span class="hero-stat-icon"><i data-lucide="send"></i></span>
+          <div><b data-stat-requests><%= formatNumber(stats.requests) %></b><small>request diproses</small></div>
+        </div>
+        <div class="hero-stat">
+          <span class="hero-stat-icon violet"><i data-lucide="check-check"></i></span>
+          <div><b data-stat-success><%= stats.successRate %>%</b><small>tingkat keberhasilan</small></div>
+        </div>
+        <div class="hero-stat">
+          <span class="hero-stat-icon green"><i data-lucide="plug-zap"></i></span>
+          <div><b><%= endpointCount %></b><small>endpoint siap pakai</small></div>
+        </div>
+        <div class="hero-stat">
+          <span class="hero-stat-icon amber"><i data-lucide="gift"></i></span>
+          <div><b data-free-remaining><%= formatNumber(freeLimit.remaining) %></b><small>sisa FreeLimit hari ini</small></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="why">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">KENAPA NUSAAPI</span>
+          <h2>API key, kuota, dan dokumentasi<br>yang rapi sejak request pertama.</h2>
+        </div>
+        <p>Bukan sekadar kumpulan endpoint. Semua yang dibutuhkan untuk mengelola API publik ada di satu tempat.</p>
+      </div>
+      <div class="feature-grid">
+        <article class="feature-card glass-card">
+          <span class="feature-icon"><i data-lucide="key-round"></i></span>
+          <h3>API key per akun</h3>
+          <p>Setiap akun mendapat key otomatis. Bisa custom atau dirotasi kapan saja, dengan proteksi hash dan enkripsi.</p>
+          <a href="/docs">Pelajari autentikasi <i data-lucide="arrow-up-right"></i></a>
+        </article>
+        <article class="feature-card glass-card">
+          <span class="feature-icon violet"><i data-lucide="gauge"></i></span>
+          <h3>Kuota & masa aktif</h3>
+          <p>Sisa kuota, pemakaian, dan tanggal expired terlihat jelas. FreeLimit reset otomatis tiap 00.00 WITA.</p>
+          <a href="/pricing">Lihat paket <i data-lucide="arrow-up-right"></i></a>
+        </article>
+        <article class="feature-card glass-card">
+          <span class="feature-icon green"><i data-lucide="code-2"></i></span>
+          <h3>Contoh kode lengkap</h3>
+          <p>Setiap endpoint punya contoh cURL, JavaScript, Python, PHP, dan Node.js plus tester langsung di browser.</p>
+          <a href="/docs">Buka docs <i data-lucide="arrow-up-right"></i></a>
+        </article>
+        <article class="feature-card glass-card">
+          <span class="feature-icon amber"><i data-lucide="activity"></i></span>
+          <h3>Monitoring transparan</h3>
+          <p>Success rate, latency, top endpoint, resource server, dan live activity feed bisa dilihat publik.</p>
+          <a href="/monitor">Lihat monitor <i data-lucide="arrow-up-right"></i></a>
+        </article>
+        <article class="feature-card glass-card">
+          <span class="feature-icon pink"><i data-lucide="shield-check"></i></span>
+          <h3>Whitelist IP</h3>
+          <p>Batasi API key agar hanya bisa dipakai dari IP atau CIDR tertentu. Cocok untuk server produksi.</p>
+          <a href="/dashboard/api#whitelist">Atur whitelist <i data-lucide="arrow-up-right"></i></a>
+        </article>
+        <article class="feature-card glass-card">
+          <span class="feature-icon blue"><i data-lucide="users"></i></span>
+          <h3>Referral & redeem</h3>
+          <p>Undang teman atau tukar kode promo untuk menambah kuota. Semua riwayat tercatat di dashboard.</p>
+          <a href="/dashboard/referral">Cek referral <i data-lucide="arrow-up-right"></i></a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-tight" id="categories">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">KATALOG ENDPOINT</span>
+          <h2>Mulai dari kategori yang kamu butuhkan.</h2>
+        </div>
+        <p><%= endpointCount %> endpoint dengan parameter jelas, contoh respons, dan batas paket yang transparan.</p>
+      </div>
+      <div class="category-grid">
+        <% categories.forEach(function (cat) { %>
+          <% var catEndpoints = endpoints.filter(function (ep) { return ep.category === cat.key; }); %>
+          <article class="category-card glass-card">
+            <div class="category-head">
+              <span class="category-icon cat-<%= cat.color %>"><i data-lucide="<%= cat.icon %>"></i></span>
+              <span class="category-count"><%= catEndpoints.length %> endpoint</span>
+            </div>
+            <h3><%= cat.name %></h3>
+            <p><%= cat.description %></p>
+            <ul>
+              <% catEndpoints.slice(0, 3).forEach(function (ep) { %>
+                <li><a href="/docs#ep-<%= ep.id %>"><code><%= ep.method %> <%= ep.path.replace('/api', '') %></code><span><%= ep.name %></span></a></li>
+              <% }); %>
+            </ul>
+            <a class="category-link" href="/docs#cat-<%= cat.key %>">Lihat semua <i data-lucide="arrow-right"></i></a>
+          </article>
+        <% }); %>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-tight" id="freelimit">
+    <div class="container">
+      <div class="freelimit-panel glass-card">
+        <div class="freelimit-copy">
+          <span class="eyebrow"><span class="eyebrow-dot green"></span> LIVE FREELIMIT</span>
+          <h2><%= formatNumber(freeLimit.limit) %> request gratis per hari.</h2>
+          <p>Gunakan API key <code>FreeLimit</code> untuk mencoba semua endpoint tanpa mendaftar. Kuota diperbarui live dan reset pada 00.00 WITA.</p>
+          <div class="freelimit-actions">
+            <a class="btn btn-primary" href="/docs#ep-status">Coba FreeLimit</a>
+            <button class="btn btn-ghost" type="button" data-copy="FreeLimit"><i data-lucide="copy"></i> Copy key</button>
+          </div>
+        </div>
+        <div class="freelimit-meter">
+          <div class="meter-head">
+            <span>Sisa kuota hari ini</span>
+            <b><span data-free-remaining><%= formatNumber(freeLimit.remaining) %></span> / <%= formatNumber(freeLimit.limit) %></b>
+          </div>
+          <div class="progress" role="meter" aria-valuemin="0" aria-valuemax="100" aria-valuenow="<%= freeLimit.percent %>">
+            <div class="progress-fill" data-free-bar style="width:<%= 100 - freeLimit.percent %>%"></div>
+          </div>
+          <div class="meter-foot">
+            <span><span data-free-used><%= formatNumber(freeLimit.used) %></span> terpakai</span>
+            <span>Reset <b data-free-reset data-reset-at="<%= freeLimit.resetAt %>">00.00 WITA</b></span>
+          </div>
+          <div class="mini-code">
+            <code>curl <%= app.url %>/api/tools/uuid -H "Authorization: Bearer FreeLimit"</code>
+            <button type="button" data-copy='curl <%= app.url %>/api/tools/uuid -H "Authorization: Bearer FreeLimit"' aria-label="Copy contoh"><i data-lucide="copy"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="how">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">CARA KERJA</span>
+          <h2>Dari daftar ke request pertama<br>dalam hitungan menit.</h2>
+        </div>
+      </div>
+      <div class="steps-grid">
+        <article class="step-card glass-card">
+          <span class="step-num">01</span>
+          <h3>Daftar akun</h3>
+          <p>Buat akun gratis. API key pertama langsung dibuat otomatis.</p>
+        </article>
+        <article class="step-card glass-card">
+          <span class="step-num">02</span>
+          <h3>Copy API key</h3>
+          <p>Buka dashboard, copy key, lalu simpan di environment variable.</p>
+        </article>
+        <article class="step-card glass-card">
+          <span class="step-num">03</span>
+          <h3>Panggil endpoint</h3>
+          <p>Gunakan contoh cURL atau bahasa favoritmu. Pantau kuota real-time.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="pricing">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">HARGA</span>
+          <h2>Mulai gratis, upgrade saat perlu.</h2>
+        </div>
+        <p>Semua paket berbayar mendapat akses ke seluruh endpoint. Tanpa biaya tersembunyi.</p>
+      </div>
+      <div class="pricing-grid pricing-grid-home">
+        <% featuredPlans.forEach(function (plan) { %>
+          <article class="price-card glass-card <%= plan.popular ? 'is-popular' : '' %> <%= plan.bestValue ? 'is-best' : '' %>">
+            <% if (plan.popular) { %><span class="price-ribbon">Paling populer</span><% } %>
+            <% if (plan.bestValue) { %><span class="price-ribbon best">Best value</span><% } %>
+            <div class="price-head">
+              <span class="price-icon"><i data-lucide="<%= plan.icon %>"></i></span>
+              <div><h3><%= plan.name %></h3><small><%= plan.label %></small></div>
+            </div>
+            <div class="price-amount"><%= plan.price === 0 ? 'Gratis' : formatIDR(plan.price) %><% if (plan.price > 0) { %><span>/<%= plan.days %> hari</span><% } %></div>
+            <p class="price-quota"><b><%= formatNumber(plan.quota) %></b> request · <%= plan.days ? plan.days + ' hari aktif' : 'tanpa masa aktif' %></p>
+            <ul class="price-features">
+              <% plan.features.forEach(function (feature) { %><li><i data-lucide="check"></i><%= feature %></li><% }); %>
+            </ul>
+            <% if (plan.key === 'free') { %>
+              <a class="btn btn-ghost btn-block" href="<%= user ? '/dashboard' : '/register' %>"><%= user ? 'Buka dashboard' : plan.cta %></a>
+            <% } else { %>
+              <a class="btn <%= plan.popular ? 'btn-primary' : 'btn-outline' %> btn-block" href="<%= user ? '/dashboard/billing?plan=' + plan.key : '/register?plan=' + plan.key %>"><%= plan.cta %></a>
+            <% } %>
+          </article>
+        <% }); %>
+      </div>
+      <div class="section-more"><a class="link-arrow" href="/pricing">Bandingkan semua paket <i data-lucide="arrow-right"></i></a></div>
+    </div>
+  </section>
+
+  <section class="section" id="apps">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">APLIKASI</span>
+          <h2>Bawa NusaAPI ke workflow kamu.</h2>
+        </div>
+        <p>Koleksi Postman dan CLI kecil untuk mulai lebih cepat.</p>
+      </div>
+      <div class="apps-grid">
+        <% if (apps.length) { %>
+          <% apps.slice(0, 3).forEach(function (item) { %>
+            <article class="app-card glass-card">
+              <div class="app-icon"><i data-lucide="<%= item.icon || 'package' %>"></i></div>
+              <div class="app-copy">
+                <h3><%= item.name %></h3>
+                <p><%= item.description %></p>
+                <div class="app-meta"><span><%= item.platform %></span><span>v<%= item.version %></span><span><%= item.size %></span></div>
+              </div>
+              <a class="btn btn-ghost btn-sm" href="<%= item.url %>" <%= item.url.startsWith('http') ? 'target="_blank" rel="noopener"' : 'download' %>><i data-lucide="download"></i> Download</a>
+            </article>
+          <% }); %>
+        <% } else { %>
+          <div class="empty-state glass-card"><i data-lucide="package-open"></i><h3>Belum ada aplikasi</h3><p>Admin dapat menambahkan aplikasi dari panel admin.</p></div>
+        <% } %>
+      </div>
+      <div class="section-more"><a class="link-arrow" href="/download">Jelajahi semua aplikasi <i data-lucide="arrow-right"></i></a></div>
+    </div>
+  </section>
+
+  <section class="section" id="testimonials">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">TESTIMONI</span>
+          <h2>Apa kata pengguna?</h2>
+        </div>
+        <p>Testimoni asli dari akun yang login. Satu akun satu testimoni, bisa diperbarui kapan saja.</p>
+      </div>
+
+      <div class="testimonial-layout">
+        <div class="testimonial-wall">
+          <% if (testimonials.length) { %>
+            <% testimonials.forEach(function (item) { %>
+              <article class="testimonial-card glass-card">
+                <div class="testimonial-top">
+                  <div class="testimonial-user">
+                    <% if (item.avatarUrl) { %><img src="<%= item.avatarUrl %>" alt="" referrerpolicy="no-referrer"><% } else { %><span class="testimonial-avatar"><%= initials(item.name || item.username) %></span><% } %>
+                    <div><b><%= item.name || item.username %></b><small>@<%= item.username %> · <%= item.plan ? item.plan.toUpperCase() : 'FREE' %></small></div>
+                  </div>
+                  <div class="stars" aria-label="<%= item.rating %> dari 5 bintang"><%= '★'.repeat(item.rating) %><span><%= '★'.repeat(5 - item.rating) %></span></div>
+                </div>
+                <p><%= item.content %></p>
+                <div class="testimonial-foot"><i data-lucide="badge-check"></i> Terverifikasi · <%= formatDate(item.updatedAt || item.createdAt) %></div>
+              </article>
+            <% }); %>
+          <% } else { %>
+            <div class="empty-state glass-card testimonial-empty">
+              <i data-lucide="message-square-quote"></i>
+              <h3>Jadi yang pertama</h3>
+              <p>Belum ada testimoni. Bagikan pengalamanmu memakai NusaAPI.</p>
+            </div>
+          <% } %>
+        </div>
+
+        <aside class="testimonial-form-card glass-card">
+          <span class="eyebrow">BAGIKAN PENGALAMAN</span>
+          <h3>Tulis testimoni</h3>
+          <% if (user) { %>
+            <p>Halo <b><%= user.name || user.username %></b>, testimoni kamu akan tampil dengan nama dan plan aktif.</p>
+            <form method="post" action="/testimonials" class="form">
+              <input type="hidden" name="_csrf" value="<%= csrf %>">
+              <div class="rating-input" role="radiogroup" aria-label="Rating">
+                <% [5,4,3,2,1].forEach(function (n) { %>
+                  <input type="radio" id="rating-<%= n %>" name="rating" value="<%= n %>" <%= (myTestimonial ? myTestimonial.rating : 5) === n ? 'checked' : '' %>>
+                  <label for="rating-<%= n %>" title="<%= n %> bintang">★</label>
+                <% }); %>
+              </div>
+              <label class="field">
+                <span>Testimoni</span>
+                <textarea name="content" rows="5" maxlength="800" minlength="10" placeholder="Ceritakan pengalamanmu memakai NusaAPI..." required><%= myTestimonial ? myTestimonial.content : '' %></textarea>
+              </label>
+              <button class="btn btn-primary btn-block" type="submit"><i data-lucide="send"></i> <%= myTestimonial ? 'Perbarui testimoni' : 'Kirim testimoni' %></button>
+            </form>
+          <% } else { %>
+            <p>Hanya pengguna yang login yang dapat mengirim testimoni. Login gratis, tanpa kartu kredit.</p>
+            <a class="btn btn-primary btn-block" href="/login?next=%2F%23testimonials"><i data-lucide="log-in"></i> Login untuk testimoni</a>
+            <a class="testimonial-register" href="/register">Belum punya akun? Daftar gratis</a>
+          <% } %>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="faq">
+    <div class="container faq-layout">
+      <div class="section-head section-head-left">
+        <span class="eyebrow">FAQ</span>
+        <h2>Pertanyaan yang sering ditanyakan.</h2>
+        <p>Belum ketemu jawabannya? <a href="/contact">Hubungi kami</a>.</p>
+      </div>
+      <div class="faq-list">
+        <article class="faq-item glass-card is-open">
+          <button type="button" class="faq-question" aria-expanded="true"><span>Apakah semua endpoint wajib pakai API key?</span><i data-lucide="chevron-down"></i></button>
+          <div class="faq-answer"><p>Ya, kecuali <code>/api/status</code>. Kirim header <code>Authorization: Bearer API_KEY</code> atau <code>X-API-Key</code>. API key membantu mengatur kuota dan mengurangi penyalahgunaan.</p></div>
+        </article>
+        <article class="faq-item glass-card">
+          <button type="button" class="faq-question" aria-expanded="false"><span>Apa yang terjadi kalau kuota habis?</span><i data-lucide="chevron-down"></i></button>
+          <div class="faq-answer"><p>Request akan ditolak dengan status 429. Kamu bisa upgrade paket, redeem kode, atau menunggu reset harian khusus FreeLimit pada 00.00 WITA.</p></div>
+        </article>
+        <article class="faq-item glass-card">
+          <button type="button" class="faq-question" aria-expanded="false"><span>Bagaimana cara memakai API di aplikasi saya?</span><i data-lucide="chevron-down"></i></button>
+          <div class="faq-answer"><p>Buka halaman Docs, pilih endpoint, isi parameter di tester atau copy contoh cURL/JavaScript/Python/PHP/Node.js. Simpan API key di environment variable, jangan di frontend.</p></div>
+        </article>
+        <article class="faq-item glass-card">
+          <button type="button" class="faq-question" aria-expanded="false"><span>Apakah ada batas request per menit?</span><i data-lucide="chevron-down"></i></button>
+          <div class="faq-answer"><p>Ada. Akun dibatasi 120 request/menit dan FreeLimit 20 request/menit per IP untuk menjaga kestabilan. Batas ini terpisah dari kuota total paket.</p></div>
+        </article>
+        <article class="faq-item glass-card">
+          <button type="button" class="faq-question" aria-expanded="false"><span>Bisakah API key dibatasi per IP?</span><i data-lucide="chevron-down"></i></button>
+          <div class="faq-answer"><p>Bisa. Aktifkan whitelist IP di dashboard, lalu tambahkan IP atau CIDR server kamu. Request dari IP lain akan ditolak dengan status 403.</p></div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-cta">
+    <div class="container">
+      <div class="cta-band glass-card">
+        <div>
+          <span class="eyebrow">SIAP MULAI?</span>
+          <h2>Ambil API key pertamamu hari ini.</h2>
+          <p>Gratis untuk mulai. Upgrade saat project kamu butuh lebih banyak ruang.</p>
+        </div>
+        <div class="cta-actions">
+          <a class="btn btn-primary btn-lg" href="<%= user ? '/dashboard' : '/register' %>"><%= user ? 'Buka dashboard' : 'Daftar gratis' %> <i data-lucide="arrow-right"></i></a>
+          <a class="btn btn-ghost btn-lg" href="/docs">Lihat docs</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<%- include('partials/footer', { scripts: ['/js/home.js'] }) %>

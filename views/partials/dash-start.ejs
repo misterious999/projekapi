@@ -1,0 +1,96 @@
+<%- include('head', { title, description: (typeof description !== 'undefined' ? description : app.description), bodyClass: (typeof bodyClass !== 'undefined' ? bodyClass : 'page-dashboard') }) %>
+
+<div class="dash-shell">
+  <aside class="dash-sidebar" id="dashSidebar">
+    <div class="dash-sidebar-inner">
+      <a class="brand" href="/">
+        <img src="/img/logo.svg" alt="" width="36" height="36">
+        <span class="brand-name">Nusa<strong>API</strong></span>
+      </a>
+
+      <nav class="dash-nav" aria-label="Menu dashboard">
+        <span class="dash-nav-label">Workspace</span>
+        <a href="/dashboard" class="<%= active === 'overview' ? 'is-active' : '' %>"><i data-lucide="layout-dashboard"></i><span>Ringkasan</span></a>
+        <a href="/dashboard/api" class="<%= active === 'api' ? 'is-active' : '' %>"><i data-lucide="key-round"></i><span>API & Kuota</span></a>
+        <a href="/dashboard/billing" class="<%= active === 'billing' ? 'is-active' : '' %>"><i data-lucide="credit-card"></i><span>Paket & Transaksi</span></a>
+        <a href="/dashboard/referral" class="<%= active === 'referral' ? 'is-active' : '' %>"><i data-lucide="users"></i><span>Referral</span></a>
+        <span class="dash-nav-label">Bantuan</span>
+        <a href="/dashboard/tickets" class="<%= active === 'tickets' ? 'is-active' : '' %>"><i data-lucide="life-buoy"></i><span>Tiket Support</span></a>
+        <a href="/dashboard/testimonial" class="<%= active === 'testimonial' ? 'is-active' : '' %>"><i data-lucide="message-square-quote"></i><span>Testimoni</span></a>
+        <a href="/dashboard/profile" class="<%= active === 'profile' ? 'is-active' : '' %>"><i data-lucide="settings"></i><span>Profil & Keamanan</span></a>
+        <% if (user && user.role === 'admin') { %>
+          <span class="dash-nav-label">Admin</span>
+          <a href="/admin"><i data-lucide="shield"></i><span>Panel Admin</span></a>
+        <% } %>
+      </nav>
+
+      <div class="dash-sidebar-bottom">
+        <div class="dash-profile-card">
+          <div class="dash-profile-top">
+            <% if (user.avatarUrl) { %>
+              <img src="<%= user.avatarUrl %>" alt="" class="dash-avatar" referrerpolicy="no-referrer">
+            <% } else { %>
+              <span class="dash-avatar dash-avatar-fallback"><%= initials(user.name || user.username) %></span>
+            <% } %>
+            <div><b><%= user.name || user.username %></b><small>@<%= user.username %></small></div>
+            <span class="plan-badge plan-<%= user.plan %>"><%= planData.name %></span>
+          </div>
+
+          <div class="dash-quota">
+            <div class="dash-quota-head"><span>Kuota</span><b><%= formatNumber(quota.remaining) %> sisa</b></div>
+            <div class="progress"><div class="progress-fill" style="width:<%= quota.percent %>%"></div></div>
+            <small><%= formatNumber(quota.used) %> / <%= formatNumber(quota.limit) %> terpakai</small>
+          </div>
+
+          <% if (user.expiresAt) { %>
+            <div class="dash-countdown" data-countdown data-expiry="<%= user.expiresAt %>">
+              <span>Sisa masa aktif</span>
+              <b data-countdown-text>—</b>
+              <small><%= formatDate(user.expiresAt) %></small>
+            </div>
+          <% } else { %>
+            <div class="dash-countdown no-expiry"><span>Masa aktif</span><b>Tanpa batas</b><small>Free plan</small></div>
+          <% } %>
+
+          <div class="dash-profile-actions">
+            <a class="btn btn-primary btn-sm" href="/dashboard/billing"><i data-lucide="arrow-up-right"></i> Upgrade</a>
+            <form method="post" action="/logout">
+              <input type="hidden" name="_csrf" value="<%= csrf %>">
+              <button class="btn btn-ghost btn-sm" type="submit" title="Logout"><i data-lucide="log-out"></i></button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <button class="dash-backdrop" id="dashBackdrop" type="button" aria-label="Tutup menu"></button>
+
+  <div class="dash-main">
+    <header class="dash-topbar">
+      <button class="dash-menu-btn" id="dashMenuBtn" type="button" aria-label="Buka menu"><i data-lucide="menu"></i></button>
+      <% var pageTitles = { overview: 'Ringkasan', api: 'API & Kuota', billing: 'Paket & Transaksi', referral: 'Referral', tickets: 'Tiket Support', testimonial: 'Testimoni', profile: 'Profil & Keamanan' }; %>
+      <div class="dash-topbar-title"><h1><%= pageTitles[active] || 'Dashboard' %></h1><span><%= app.name %> workspace</span></div>
+      <div class="dash-topbar-actions">
+        <a class="topbar-link" href="/docs"><i data-lucide="book-open"></i> Docs</a>
+        <a class="topbar-link" href="/monitor"><i data-lucide="activity"></i> Monitor</a>
+        <a class="topbar-avatar" href="/dashboard/profile" title="<%= user.username %>">
+          <% if (user.avatarUrl) { %><img src="<%= user.avatarUrl %>" alt="" referrerpolicy="no-referrer"><% } else { %><span><%= initials(user.name || user.username) %></span><% } %>
+        </a>
+      </div>
+    </header>
+
+    <main class="dash-content">
+      <% if (announcement) { %>
+        <div class="announcement-dash" data-announcement data-announcement-key="dash-<%= String(announcement).length %>">
+          <i data-lucide="megaphone"></i>
+          <p><%= announcement %></p>
+          <button type="button" data-announcement-close aria-label="Tutup">×</button>
+        </div>
+      <% } %>
+      <% if (user.expired) { %>
+        <div class="alert alert-danger">
+          <i data-lucide="triangle-alert"></i>
+          <div><b>Masa aktif paket sudah habis.</b><p>Request API akan ditolak sampai paket diperpanjang. <a href="/dashboard/billing">Perpanjang sekarang</a>.</p></div>
+        </div>
+      <% } %>

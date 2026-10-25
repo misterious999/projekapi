@@ -1,0 +1,988 @@
+{
+  "info": {
+    "_postman_id": "a7b8c9d0-nusa-api-2026",
+    "name": "NusaAPI 1.0.0 — Endpoint Collection",
+    "description": "Koleksi resmi NusaAPI. Satu API untuk semua project.\n\n1. Duplikat environment atau ubah variabel collection.\n2. Set baseUrl ke URL server kamu.\n3. Set apiKey ke API key dari dashboard, atau gunakan FreeLimit untuk demo.\n\nSemua respons memakai envelope { status, code, message, data, meta }.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "apiKey",
+      "value": "FreeLimit",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "AI",
+      "description": "Chat, ringkas, dan analisis sentimen dengan fallback lokal.",
+      "item": [
+        {
+          "name": "AI Chat (GET)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/ai/chat?q=Apa%20itu%20REST%20API%3F",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "ai",
+                "chat"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "Apa itu REST API?"
+                }
+              ]
+            },
+            "description": "Chat dengan model AI dan dapatkan jawaban singkat.\n\nMengirim pertanyaan ke model AI yang dikonfigurasi server. Jika AI_API_KEY belum diisi, endpoint tetap merespons dengan mode demo lokal agar dokumentasi dan integrasi bisa diuji.\n\nPlan minimum: Free. Butuh API key.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{apiKey}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Respons sukses (2xx)\", function () {",
+                  "  pm.response.to.be.success;",
+                  "});",
+                  "pm.test(\"Envelope JSON valid\", function () {",
+                  "  pm.expect(pm.response.json()).to.have.property(\"status\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Ringkas Teks (POST)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/ai/summarize?text=REST%20API%20adalah%20gaya%20arsitektur...",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "ai",
+                "summarize"
+              ],
+              "query": [
+                {
+                  "key": "text",
+                  "value": "REST API adalah gaya arsitektur..."
+                }
+              ]
+            },
+            "description": "Ringkas paragraf panjang menjadi beberapa poin.\n\nMenerima teks dan mengembalikan ringkasan. Bila model AI tersedia, ringkasan dibuat oleh model. Bila tidak, digunakan ringkasan ekstraktif lokal sehingga endpoint tetap berfungsi.\n\nPlan minimum: plus. Butuh API key.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{apiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"text\": \"REST API adalah gaya arsitektur...\",\n  \"max\": \"3\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Respons sukses (2xx)\", function () {",
+                  "  pm.response.to.be.success;",
+                  "});",
+                  "pm.test(\"Envelope JSON valid\", function () {",
+                  "  pm.expect(pm.response.json()).to.have.property(\"status\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Analisis Sentimen (POST)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/ai/sentiment?text=Pelayanannya%20cepat%20dan%20sangat%20membantu!",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "ai",
+                "sentiment"
+              ],
+              "query": [
+                {
+                  "key": "text",
+                  "value": "Pelayanannya cepat dan sangat membantu!"
+                }
+              ]
+            },
+            "description": "Deteksi nada positif, netral, atau negatif dari teks.\n\nAnalisis sentimen berbasis leksikon lokal. Cocok untuk filter cepat tanpa mengirim data ke pihak ketiga.\n\nPlan minimum: plus. Butuh API key.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{apiKey}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"text\": \"Pelayanannya cepat dan sangat membantu!\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Respons sukses (2xx)\", function () {",
+                  "  pm.response.to.be.success;",
+                  "});",
+                  "pm.test(\"Envelope JSON valid\", function () {",
+                  "  pm.expect(pm.response.json()).to.have.property(\"status\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Downloader",
+      "description": "Ambil metadata video dari platform populer secara aman.",
+      "item": [
+        {
+          "name": "YouTube Metadata (GET)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/downloader/youtube?url=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3DdQw4w9WgXcQ",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "downloader",
+                "youtube"
+              ],
+              "query": [
+                {
+                  "key": "url",
+                  "value": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+                }
+              ]
+            },
+            "description": "Ambil judul, channel, dan thumbnail video YouTube.\n\nMengambil metadata publik melalui oEmbed. Endpoint ini tidak mengunduh video dan tidak membagikan file berhak cipta. Gunakan untuk preview link, katalog, atau embed.\n\nPlan minimum: starter. Butuh API key.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{apiKey}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Respons sukses (2xx)\", function () {",
+                  "  pm.response.to.be.success;",
+                  "});",
+                  "pm.test(\"Envelope JSON valid\", function () {",
+                  "  pm.expect(pm.response.json()).to.have.property(\"status\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "TikTok Metadata (GET)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/downloader/tiktok?url=https%3A%2F%2Fwww.tiktok.com%2F%40username%2Fvideo%2F123",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "downloader",
+                "tiktok"
+              ],
+              "query": [
+                {
+                  "key": "url",
+                  "value": "https://www.tiktok.com/@username/video/123"
+                }
+              ]
+            },
+            "description": "Ambil metadata publik dari link TikTok.\n\nMenggunakan oEmbed TikTok untuk mendapatkan judul, author, dan thumbnail. Tidak mengambil file video.\n\nPlan minimum: plus. Butuh API key.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{apiKey}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Respons sukses (2xx)\", function () {",
+                  "  pm.response.to.be.success;",
+                  "});",
+                  "pm.test(\"Envelope JSON valid\", function () {",
+                  "  pm.expect(pm.response.json()).to.have.property(\"status\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Tools",
+      "description": "Utilitas harian: cuaca, kurs, shortlink, UUID, dan lainnya.",
+      "item": [
+        {
+          "name": "URL Shortener (GET)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/tools/shorten?url=https%3A%2F%2Fexample.com%2Fhalaman-yang-sangat-panjang",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tools",
+                "shorten"
+              ],
+              "query": [
+                {
+                  "key": "url",
+                  "value": "https://example.com/halaman-yang-sangat-panjang"
+                }
+              ]
+            },
+            "description": "Pendekkan URL panjang menjadi link ringkas.\n\nMemakai penyedia shortlink publik (TinyURL dengan fallback is.gd). Hanya URL http/https yang diterima.\n\nPlan minimum: Free. Butuh API key.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{apiKey}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Respons sukses (2xx)\", function () {",
+                  "  pm.response.to.be.success;",
+                  "});",
+                  "pm.test(\"Envelope JSON valid\", function () {",
+                  "  pm.expect(pm.response.json()).to.have.property(\"status\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Cuaca Kota (GET)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/tools/weather?city=Jakarta",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tools",
+                "weather"
+              ],
+              "query": [
+                {
+                  "key": "city",
+                  "value": "Jakarta"
+                }
+              ]
+            },
+            "description": "Cek cuaca terkini dan prakiraan 3 hari.\n\nData dari Open-Meteo (tanpa API key). Nama kota dicari otomatis, lalu diambil cuaca terkini dan prakiraan tiga hari.\n\nPlan minimum: Free. Butuh API key.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{apiKey}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Respons sukses (2xx)\", function () {",
+                  "  pm.response.to.be.success;",
+                  "});",
+                  "pm.test(\"Envelope JSON valid\", function () {",
+                  "  pm.expect(pm.response.json()).to.have.property(\"status\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Kurs Mata Uang (GET)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/tools/currency",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tools",
+                "currency"
+              ]
+            },
+            "description": "Konversi mata uang dengan kurs terbaru.\n\nMengambil kurs harian dari open.er-api.com, lalu mengonversi jumlah yang diminta.\n\nPlan minimum: Free. Butuh API key.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{apiKey}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Respons sukses (2xx)\", function () {",
+                  "  pm.response.to.be.success;",
+                  "});",
+                  "pm.test(\"Envelope JSON valid\", function () {",
+                  "  pm.expect(pm.response.json()).to.have.property(\"status\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "UUID Generator (GET)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/tools/uuid",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tools",
+                "uuid"
+              ]
+            },
+            "description": "Buat UUID v4 acak, satu atau beberapa sekaligus.\n\nMenghasilkan UUID v4 menggunakan crypto bawaan Node.js. Berguna untuk ID transaksi, device ID, atau seed data.\n\nPlan minimum: Free. Butuh API key.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{apiKey}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Respons sukses (2xx)\", function () {",
+                  "  pm.response.to.be.success;",
+                  "});",
+                  "pm.test(\"Envelope JSON valid\", function () {",
+                  "  pm.expect(pm.response.json()).to.have.property(\"status\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Base64 (GET)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/tools/base64?text=Halo%20NusaAPI",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tools",
+                "base64"
+              ],
+              "query": [
+                {
+                  "key": "text",
+                  "value": "Halo NusaAPI"
+                }
+              ]
+            },
+            "description": "Encode atau decode teks Base64.\n\nKonversi teks ke Base64 atau sebaliknya. Mendukung mode encode dan decode.\n\nPlan minimum: Free. Butuh API key.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{apiKey}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Respons sukses (2xx)\", function () {",
+                  "  pm.response.to.be.success;",
+                  "});",
+                  "pm.test(\"Envelope JSON valid\", function () {",
+                  "  pm.expect(pm.response.json()).to.have.property(\"status\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Hash Text (GET)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/tools/hash?text=rahasia",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "tools",
+                "hash"
+              ],
+              "query": [
+                {
+                  "key": "text",
+                  "value": "rahasia"
+                }
+              ]
+            },
+            "description": "Hitung hash teks dengan MD5, SHA-1, SHA-256, atau SHA-512.\n\nMenghitung checksum teks. Jangan gunakan MD5/SHA-1 untuk menyimpan password.\n\nPlan minimum: starter. Butuh API key.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{apiKey}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Respons sukses (2xx)\", function () {",
+                  "  pm.response.to.be.success;",
+                  "});",
+                  "pm.test(\"Envelope JSON valid\", function () {",
+                  "  pm.expect(pm.response.json()).to.have.property(\"status\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Maker",
+      "description": "Buat QR code dan konten kecil langsung dari request.",
+      "item": [
+        {
+          "name": "QR Code (GET)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/maker/qr?text=https%3A%2F%2Fnusaapi.local",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "maker",
+                "qr"
+              ],
+              "query": [
+                {
+                  "key": "text",
+                  "value": "https://nusaapi.local"
+                }
+              ]
+            },
+            "description": "Generate QR code sebagai data URL atau SVG.\n\nMembuat QR code dari teks, URL, atau nomor telepon. Mendukung format PNG data URL (default) dan SVG.\n\nPlan minimum: Free. Butuh API key.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{apiKey}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Respons sukses (2xx)\", function () {",
+                  "  pm.response.to.be.success;",
+                  "});",
+                  "pm.test(\"Envelope JSON valid\", function () {",
+                  "  pm.expect(pm.response.json()).to.have.property(\"status\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Quote Generator (GET)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/maker/quote",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "maker",
+                "quote"
+              ]
+            },
+            "description": "Dapatkan kutipan acak untuk konten atau bot.\n\nKumpulan kutipan pendek bertema motivasi, teknologi, dan kehidupan. Bisa difilter berdasarkan kategori.\n\nPlan minimum: Free. Butuh API key.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{apiKey}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Respons sukses (2xx)\", function () {",
+                  "  pm.response.to.be.success;",
+                  "});",
+                  "pm.test(\"Envelope JSON valid\", function () {",
+                  "  pm.expect(pm.response.json()).to.have.property(\"status\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Network",
+      "description": "Informasi IP dan pemeriksaan DNS untuk kebutuhan integrasi.",
+      "item": [
+        {
+          "name": "DNS Lookup (GET)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/network/dns?domain=example.com",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "network",
+                "dns"
+              ],
+              "query": [
+                {
+                  "key": "domain",
+                  "value": "example.com"
+                }
+              ]
+            },
+            "description": "Periksa record DNS sebuah domain.\n\nQuery record A, AAAA, MX, TXT, CNAME, atau NS langsung dari resolver server.\n\nPlan minimum: starter. Butuh API key.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{apiKey}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Respons sukses (2xx)\", function () {",
+                  "  pm.response.to.be.success;",
+                  "});",
+                  "pm.test(\"Envelope JSON valid\", function () {",
+                  "  pm.expect(pm.response.json()).to.have.property(\"status\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "IP Info (GET)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/network/ip",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "network",
+                "ip"
+              ]
+            },
+            "description": "Lihat alamat IP publik dan header request kamu.\n\nMengembalikan alamat IP yang terlihat oleh server beserta beberapa header koneksi. Berguna untuk debug proxy.\n\nPlan minimum: Free. Butuh API key.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{apiKey}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Respons sukses (2xx)\", function () {",
+                  "  pm.response.to.be.success;",
+                  "});",
+                  "pm.test(\"Envelope JSON valid\", function () {",
+                  "  pm.expect(pm.response.json()).to.have.property(\"status\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Monitoring",
+      "description": "Status layanan, uptime, dan informasi akun API.",
+      "item": [
+        {
+          "name": "Status Layanan (GET)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "status"
+              ]
+            },
+            "description": "Cek status API, uptime, dan versi layanan.\n\nEndpoint publik tanpa API key. Cocok untuk health check uptime monitor.\n\nPlan minimum: Free. Endpoint publik."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Respons sukses (2xx)\", function () {",
+                  "  pm.response.to.be.success;",
+                  "});",
+                  "pm.test(\"Envelope JSON valid\", function () {",
+                  "  pm.expect(pm.response.json()).to.have.property(\"status\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Akun Saya (GET)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "me"
+              ]
+            },
+            "description": "Lihat plan, kuota, dan pemakaian akun API kamu.\n\nMengembalikan ringkasan akun yang terkait dengan API key: plan, sisa kuota, tanggal expired, dan request hari ini.\n\nPlan minimum: Free. Butuh API key.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{apiKey}}",
+                  "type": "string"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Respons sukses (2xx)\", function () {",
+                  "  pm.response.to.be.success;",
+                  "});",
+                  "pm.test(\"Envelope JSON valid\", function () {",
+                  "  pm.expect(pm.response.json()).to.have.property(\"status\");",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+<%- include('partials/head', { title, description, bodyClass }) %>
+<%- include('partials/nav') %>
+
+<main class="page-main">
+  <section class="page-hero page-hero-small">
+    <div class="container">
+      <span class="eyebrow"><%= kind === 'terms' ? 'SYARAT & KETENTUAN' : 'KEBIJAKAN PRIVASI' %></span>
+      <h1><%= kind === 'terms' ? 'Aturan pakai layanan.' : 'Data yang kami simpan.' %></h1>
+      <p>Terakhir diperbarui: <%= formatDate(Date.now()) %>. Dokumen ini menjelaskan ketentuan dasar penggunaan <%= app.name %>.</p>
+    </div>
+  </section>
+
+  <section class="section section-tight">
+    <div class="container legal-layout">
+      <aside class="legal-aside glass-card">
+        <h3>Daftar isi</h3>
+        <% if (kind === 'terms') { %>
+          <a href="#acceptance">Penerimaan ketentuan</a>
+          <a href="#account">Akun & API key</a>
+          <a href="#usage">Penggunaan yang dilarang</a>
+          <a href="#quota">Kuota & pembayaran</a>
+          <a href="#availability">Ketersediaan layanan</a>
+          <a href="#liability">Batasan tanggung jawab</a>
+          <a href="#changes">Perubahan ketentuan</a>
+        <% } else { %>
+          <a href="#data">Data yang dikumpulkan</a>
+          <a href="#usage">Cara data digunakan</a>
+          <a href="#storage">Penyimpanan & keamanan</a>
+          <a href="#thirdparty">Pihak ketiga</a>
+          <a href="#rights">Hak pengguna</a>
+          <a href="#contact">Kontak</a>
+        <% } %>
+      </aside>
+
+      <div class="legal-content glass-card">
+        <% if (kind === 'terms') { %>
+          <section id="acceptance"><h2>1. Penerimaan ketentuan</h2><p>Dengan membuat akun atau memakai API <%= app.name %>, kamu dianggap menyetujui ketentuan ini. Jika tidak setuju, jangan menggunakan layanan.</p></section>
+          <section id="account"><h2>2. Akun & API key</h2><p>Kamu bertanggung jawab menjaga kerahasiaan API key dan password. Semua request yang memakai key kamu dianggap sebagai aktivitas akunmu. Segera rotasi key jika bocor.</p><p>Satu akun diperuntukkan bagi satu pengguna atau satu tim kecil. Membuat banyak akun untuk menghindari kuota dapat menyebabkan pembatasan.</p></section>
+          <section id="usage"><h2>3. Penggunaan yang dilarang</h2><ul><li>Spam, flooding, atau upaya mengganggu layanan.</li><li>Mengakses data tanpa izin, menembus sistem, atau menyalahgunakan endpoint.</li><li>Mengunduh atau mendistribusikan konten yang melanggar hak cipta.</li><li>Menjual ulang akses tanpa izin tertulis.</li></ul></section>
+          <section id="quota"><h2>4. Kuota & pembayaran</h2><p>Kuota dihitung per request yang diproses. Pembayaran dilakukan manual melalui kanal yang diumumkan admin. Paket aktif setelah pembayaran dikonfirmasi. Kecuali dinyatakan lain, pembayaran yang sudah dilakukan tidak dapat dikembalikan.</p></section>
+          <section id="availability"><h2>5. Ketersediaan layanan</h2><p>Kami berupaya menjaga layanan tetap stabil, tetapi tidak menjamin ketersediaan tanpa gangguan. Pemeliharaan, gangguan upstream, atau force majeure dapat menyebabkan downtime.</p></section>
+          <section id="liability"><h2>6. Batasan tanggung jawab</h2><p>Layanan disediakan "sebagaimana adanya". Kami tidak bertanggung jawab atas kerugian tidak langsung, kehilangan data, atau kerugian akibat penggunaan endpoint pihak ketiga.</p></section>
+          <section id="changes"><h2>7. Perubahan ketentuan</h2><p>Ketentuan dapat diperbarui sewaktu-waktu. Versi terbaru akan dipublikasikan di halaman ini. Penggunaan setelah perubahan berarti kamu menyetujui versi baru.</p></section>
+          <div class="legal-callout"><i data-lucide="shield-check"></i><p>Pertanyaan hukum atau kerja sama? Hubungi <a href="mailto:<%= app.supportEmail %>"><%= app.supportEmail %></a>.</p></div>
+        <% } else { %>
+          <section id="data"><h2>1. Data yang dikumpulkan</h2><p>Kami menyimpan data akun (nama, username, email, foto profil opsional), data autentikasi (hash password), API key terenkripsi, plan, kuota, serta log request terbatas (endpoint, status, latency, IP ter-mask).</p></section>
+          <section id="usage"><h2>2. Cara data digunakan</h2><ul><li>Menjalankan autentikasi dan otorisasi API key.</li><li>Menghitung kuota, menampilkan statistik, dan mencegah penyalahgunaan.</li><li>Menanggapi tiket, order, dan permintaan dukungan.</li><li>Menjaga keamanan serta meningkatkan stabilitas layanan.</li></ul></section>
+          <section id="storage"><h2>3. Penyimpanan & keamanan</h2><p>Password disimpan sebagai hash scrypt. API key disimpan dalam bentuk hash untuk pencarian dan salinan terenkripsi AES-256-GCM untuk ditampilkan kepada pemilik akun. Akses database dilakukan server-side melalui Firebase Admin SDK; client tidak diberi akses langsung.</p></section>
+          <section id="thirdparty"><h2>4. Pihak ketiga</h2><p>Beberapa endpoint memanggil layanan pihak ketiga (misalnya Open-Meteo, open.er-api.com, TinyURL, YouTube/TikTok oEmbed, atau penyedia AI jika dikonfigurasi). Data yang dikirim hanya parameter yang kamu masukkan ke endpoint tersebut.</p></section>
+          <section id="rights"><h2>5. Hak pengguna</h2><p>Kamu dapat memperbarui profil, mengganti password, merotasi API key, dan menghapus akun dari dashboard. Penghapusan akun menghapus data akun dan key; log agregat anonim dapat tetap disimpan untuk statistik.</p></section>
+          <section id="contact"><h2>6. Kontak</h2><p>Pertanyaan privasi dapat dikirim ke <a href="mailto:<%= app.supportEmail %>"><%= app.supportEmail %></a> atau melalui halaman <a href="/contact">Kontak</a>.</p></section>
+          <div class="legal-callout"><i data-lucide="lock"></i><p>Jangan pernah mengirim API key atau password melalui tiket, email, atau WhatsApp.</p></div>
+        <% } %>
+      </div>
+    </div>
+  </section>
+</main>
+
+<%- include('partials/footer', { scripts: [] }) %>
