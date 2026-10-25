@@ -1,8 +1,8 @@
-# NusaAPI
+# ZeroixApi
 
 **Satu API untuk semua project.** Platform REST API publik dengan dokumentasi, API key, kuota, pembayaran manual, monitoring real-time, dashboard pengguna, dan admin panel. Dibangun dengan Express, EJS, dan Firebase Realtime Database.
 
-> Branding, teks, dan aset di project ini original untuk NusaAPI. Jangan menyalin logo atau aset dari layanan lain.
+> Branding, teks, dan aset di project ini original untuk ZeroixApi. Jangan menyalin logo atau aset dari layanan lain.
 
 ## Fitur
 
@@ -105,7 +105,7 @@ npm run check
 | `FIREBASE_DATABASE_URL` | URL Realtime Database. |
 | `FIREBASE_SERVICE_ACCOUNT` | Path service account. Default `./serviceAccountKey.json`. |
 | `FIREBASE_SERVICE_ACCOUNT_JSON` | Alternatif: isi JSON service account satu baris. |
-| `FIREBASE_DB_ROOT` | Namespace data. Default `nusaapi`, mencegah bentrok dengan data aplikasi lain. |
+| `FIREBASE_DB_ROOT` | Namespace data. Default `zeroixapi`, mencegah bentrok dengan data aplikasi lain. |
 | `SESSION_SECRET` | Secret cookie sesi. Wajib diganti. |
 | `KEY_ENCRYPTION_SECRET` | Enkripsi API key di database. Jangan diubah setelah ada key tanpa rencana migrasi. |
 | `ADMIN_EMAIL`, `ADMIN_PASSWORD` | Seed admin awal. Password tidak menimpa akun yang sudah ada. |
@@ -122,11 +122,11 @@ Semua daftar variabel ada di `.env.example`.
 Gunakan salah satu header:
 
 ```http
-Authorization: Bearer nusa_xxxxxxxxxxxxxxxxx
+Authorization: Bearer zeroix_xxxxxxxxxxxxxxxxx
 ```
 
 ```http
-X-API-Key: nusa_xxxxxxxxxxxxxxxxx
+X-API-Key: zeroix_xxxxxxxxxxxxxxxxx
 ```
 
 Demo key:
@@ -226,14 +226,14 @@ Pastikan `.env` berisi `APP_URL=https://domain-kamu`, `NODE_ENV=production`, dan
 ### Docker
 
 ```bash
-docker build -t nusaapi .
-docker run -d --name nusaapi \
+docker build -t zeroixapi .
+docker run -d --name zeroixapi \
   -p 3000:3000 \
   --env-file .env \
   -v "$PWD/serviceAccountKey.json:/run/secrets/serviceAccountKey.json:ro" \
   -e FIREBASE_SERVICE_ACCOUNT=/run/secrets/serviceAccountKey.json \
   --restart unless-stopped \
-  nusaapi
+  zeroixapi
 ```
 
 Service account tidak masuk image karena `.dockerignore`. Database rules ada di `firebase.rules.json`.
@@ -258,13 +258,13 @@ Health check: `GET /healthz`.
 
 ## Download resmi
 
-- `/downloads/nusaapi-postman.json` — import ke Postman/Insomnia, ubah `baseUrl` dan `apiKey`.
-- `/downloads/nusaapi-cli.js` — Node.js 18+:
+- `/downloads/zeroixapi-postman.json` — import ke Postman/Insomnia, ubah `baseUrl` dan `apiKey`.
+- `/downloads/zeroixapi-cli.js` — Node.js 18+:
 
 ```bash
-NUSAAPI_KEY=FreeLimit node public/downloads/nusaapi-cli.js /api/status
-node public/downloads/nusaapi-cli.js /api/tools/weather --query city=Jakarta
-node public/downloads/nusaapi-cli.js /api/ai/chat --key nusa_xxx --query q="Apa itu API?"
+ZEROIXAPI_KEY=FreeLimit node public/downloads/zeroixapi-cli.js /api/status
+node public/downloads/zeroixapi-cli.js /api/tools/weather --query city=Jakarta
+node public/downloads/zeroixapi-cli.js /api/ai/chat --key zeroix_xxx --query q="Apa itu API?"
 ```
 
 ## Troubleshooting
@@ -273,9 +273,9 @@ node public/downloads/nusaapi-cli.js /api/ai/chat --key nusa_xxx --query q="Apa 
 - **Login loop / sesi hilang**: cek `SESSION_SECRET`, `APP_URL`, dan konfigurasi cookie/HTTPS.
 - **Icons tidak tampil**: Lucide dimuat dari `unpkg.com`; CSP di `app.js` mengizinkan domain tersebut.
 - **API key tidak bisa dibuka**: `KEY_ENCRYPTION_SECRET` harus sama dengan saat key dibuat.
-- **Data lama tidak terlihat**: cek `FIREBASE_DB_ROOT`. Aplikasi ini memakai namespace `nusaapi`; data lama Panel Shop tetap berada di root berbeda dan tidak disentuh.
+- **Data lama tidak terlihat**: cek `FIREBASE_DB_ROOT`. Aplikasi ini memakai namespace `zeroixapi`; data lama Panel Shop tetap berada di root berbeda dan tidak disentuh.
 - **`npm install` gagal symlink**: gunakan `npm install --no-bin-links`.
 
 ## Lisensi
 
-UNLICENSED — hak dan branding NusaAPI. Jangan mendistribusikan ulang tanpa izin.
+UNLICENSED — hak dan branding ZeroixApi. Jangan mendistribusikan ulang tanpa izin.

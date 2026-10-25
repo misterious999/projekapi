@@ -1,4 +1,4 @@
-/* NusaAPI — live monitoring dashboard */
+/* ZeroixApi — live monitoring dashboard */
 (function () {
   'use strict';
 
@@ -366,7 +366,7 @@
     renderTopUsers(data.topUsers);
     renderFeed(data.recent);
     drawChart(data.daily);
-    if (window.Nusa) window.Nusa.refreshIcons();
+    if (window.Zeroix) window.Zeroix.refreshIcons();
   }
 
   async function load(force) {
@@ -402,7 +402,7 @@
         refresh.disabled = true;
         await load(true);
         refresh.disabled = false;
-        if (window.Nusa) window.Nusa.showToast('Data monitor diperbarui.', 'success');
+        if (window.Zeroix) window.Zeroix.showToast('Data monitor diperbarui.', 'success');
       });
     }
 

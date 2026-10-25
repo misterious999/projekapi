@@ -8,8 +8,8 @@ const env = process.env;
 const isProd = env.NODE_ENV === 'production';
 
 const app = {
-  name: env.APP_NAME || 'NusaAPI',
-  legalName: env.APP_LEGAL_NAME || 'NusaAPI',
+  name: env.APP_NAME || 'ZeroixApi',
+  legalName: env.APP_LEGAL_NAME || 'ZeroixApi',
   tagline: env.APP_TAGLINE || 'Satu API untuk semua project.',
   description:
     env.APP_DESCRIPTION ||
@@ -21,10 +21,10 @@ const app = {
   version: env.APP_VERSION || '1.0.0',
   year: new Date().getFullYear(),
   waAdmin: (env.WA_ADMIN || '6281234567890').replace(/\D/g, ''),
-  supportEmail: env.SUPPORT_EMAIL || 'support@nusaapi.local',
+  supportEmail: env.SUPPORT_EMAIL || 'support@zeroixapi.local',
   sessionSecret: env.SESSION_SECRET || 'dev-session-secret-change-me',
   keySecret: env.KEY_ENCRYPTION_SECRET || env.SESSION_SECRET || 'dev-key-secret-change-me',
-  adminEmail: (env.ADMIN_EMAIL || 'admin@nusaapi.local').toLowerCase(),
+  adminEmail: (env.ADMIN_EMAIL || 'admin@zeroixapi.local').toLowerCase(),
   adminPassword: env.ADMIN_PASSWORD || 'Admin#12345',
   adminName: env.ADMIN_NAME || 'Administrator',
   registrationOpen: String(env.REGISTRATION_OPEN || 'true') !== 'false',
@@ -33,7 +33,7 @@ const app = {
   referralBonus: Number(env.REFERRAL_BONUS || 150),
   sessionDays: Number(env.SESSION_DAYS || 7),
   trustProxy: env.TRUST_PROXY === 'false' ? false : Number(env.TRUST_PROXY || 1),
-  dbRoot: (env.FIREBASE_DB_ROOT || 'nusaapi').replace(/^\/|\/$/g, ''),
+  dbRoot: (env.FIREBASE_DB_ROOT || 'zeroixapi').replace(/^\/|\/$/g, ''),
   ai: {
     baseUrl: (env.AI_BASE_URL || 'https://api.openai.com/v1').replace(/\/$/, ''),
     apiKey: env.AI_API_KEY || '',
@@ -349,7 +349,7 @@ const endpoints = [
     description: 'Membuat QR code dari teks, URL, atau nomor telepon. Mendukung format PNG data URL (default) dan SVG.',
     minPlan: 'free',
     params: [
-      { name: 'text', type: 'string', required: true, example: 'https://nusaapi.local', description: 'Isi QR code (maks. 1.500 karakter).' },
+      { name: 'text', type: 'string', required: true, example: 'https://zeroixapi.local', description: 'Isi QR code (maks. 1.500 karakter).' },
       { name: 'size', type: 'number', required: false, example: '320', description: 'Ukuran gambar 120-1000 px.' },
       { name: 'format', type: 'string', required: false, example: 'png', description: 'png (data URL) atau svg.' },
     ],
@@ -374,7 +374,7 @@ const endpoints = [
     response: {
       status: true,
       message: 'success',
-      data: { quote: 'Sistem yang baik membuat hal sulit terasa biasa.', author: 'NusaAPI', category: 'teknologi' },
+      data: { quote: 'Sistem yang baik membuat hal sulit terasa biasa.', author: 'ZeroixApi', category: 'teknologi' },
     },
   },
   {
@@ -461,7 +461,7 @@ const endpoints = [
     description: 'Konversi teks ke Base64 atau sebaliknya. Mendukung mode encode dan decode.',
     minPlan: 'free',
     params: [
-      { name: 'text', type: 'string', required: true, example: 'Halo NusaAPI', description: 'Teks yang diproses.' },
+      { name: 'text', type: 'string', required: true, example: 'Halo ZeroixApi', description: 'Teks yang diproses.' },
       { name: 'mode', type: 'string', required: false, example: 'encode', description: 'encode atau decode (default encode).' },
     ],
     response: {
@@ -538,7 +538,7 @@ const endpoints = [
     response: {
       status: true,
       message: 'success',
-      data: { service: 'NusaAPI', version: '1.0.0', uptime: 1234, time: '2026-01-01T00:00:00.000Z' },
+      data: { service: 'ZeroixApi', version: '1.0.0', uptime: 1234, time: '2026-01-01T00:00:00.000Z' },
     },
   },
   {

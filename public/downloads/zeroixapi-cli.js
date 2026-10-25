@@ -2,14 +2,14 @@
 'use strict';
 
 /**
- * NusaAPI CLI — pemanggil endpoint sederhana untuk terminal.
+ * ZeroixApi CLI — pemanggil endpoint sederhana untuk terminal.
  * Tidak membutuhkan dependency eksternal. Node.js 18+ (fetch bawaan).
  *
  * Contoh:
- *   node nusaapi-cli.js /api/status
- *   NUSAAPI_KEY=nusa_xxx node nusaapi-cli.js /api/tools/weather?city=Jakarta
- *   node nusaapi-cli.js /api/ai/chat --key FreeLimit --query q="Apa itu REST API?"
- *   node nusaapi-cli.js /api/tools/hash --data '{"text":"NusaAPI","algorithm":"sha256"}'
+ *   node zeroixapi-cli.js /api/status
+ *   ZEROIXAPI_KEY=zeroix_xxx node zeroixapi-cli.js /api/tools/weather?city=Jakarta
+ *   node zeroixapi-cli.js /api/ai/chat --key FreeLimit --query q="Apa itu REST API?"
+ *   node zeroixapi-cli.js /api/tools/hash --data '{"text":"ZeroixApi","algorithm":"sha256"}'
  */
 
 const fs = require('fs');
@@ -17,21 +17,21 @@ const path = require('path');
 
 const VERSION = '1.0.0';
 const DEFAULTS = {
-  base: process.env.NUSAAPI_BASE || 'http://localhost:3000',
-  key: process.env.NUSAAPI_KEY || 'FreeLimit',
+  base: process.env.ZEROIXAPI_BASE || 'http://localhost:3000',
+  key: process.env.ZEROIXAPI_KEY || 'FreeLimit',
 };
 
 function usage() {
   console.log(`
-NusaAPI CLI v${VERSION}
+ZeroixApi CLI v${VERSION}
 
 Pemakaian:
-  node nusaapi-cli.js <path> [opsi]
+  node zeroixapi-cli.js <path> [opsi]
 
 Opsi:
   --method <GET|POST>     Method request (default: GET, atau POST jika --data dipakai)
-  --key <api-key>         API key (default: env NUSAAPI_KEY atau FreeLimit)
-  --base <url>            Base URL (default: env NUSAAPI_BASE atau ${DEFAULTS.base})
+  --key <api-key>         API key (default: env ZEROIXAPI_KEY atau FreeLimit)
+  --base <url>            Base URL (default: env ZEROIXAPI_BASE atau ${DEFAULTS.base})
   --query <k=v>           Tambah query parameter (bisa diulang)
   --data <json>           Body JSON untuk POST
   --data @file.json       Baca body JSON dari file
@@ -40,9 +40,9 @@ Opsi:
   -v, --version           Tampilkan versi
 
 Contoh:
-  node nusaapi-cli.js /api/status
-  node nusaapi-cli.js /api/tools/qr --query text="Halo NusaAPI"
-  node nusaapi-cli.js /api/ai/summarize --data '{"text":"Teks yang ingin diringkas..."}'
+  node zeroixapi-cli.js /api/status
+  node zeroixapi-cli.js /api/tools/qr --query text="Halo ZeroixApi"
+  node zeroixapi-cli.js /api/ai/summarize --data '{"text":"Teks yang ingin diringkas..."}'
 `);
 }
 
@@ -128,7 +128,7 @@ async function main() {
   }
 
   const method = options.method || (body ? 'POST' : 'GET');
-  const headers = { Accept: 'application/json', 'User-Agent': 'NusaAPI-CLI/' + VERSION };
+  const headers = { Accept: 'application/json', 'User-Agent': 'ZeroixApi-CLI/' + VERSION };
   if (options.sendKey && options.key) headers.Authorization = 'Bearer ' + options.key;
   if (body) headers['Content-Type'] = 'application/json';
 

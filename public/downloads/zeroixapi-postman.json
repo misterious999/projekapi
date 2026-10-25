@@ -1,8 +1,8 @@
 {
   "info": {
-    "_postman_id": "a7b8c9d0-nusa-api-2026",
-    "name": "NusaAPI 1.0.0 — Endpoint Collection",
-    "description": "Koleksi resmi NusaAPI. Satu API untuk semua project.\n\n1. Duplikat environment atau ubah variabel collection.\n2. Set baseUrl ke URL server kamu.\n3. Set apiKey ke API key dari dashboard, atau gunakan FreeLimit untuk demo.\n\nSemua respons memakai envelope { status, code, message, data, meta }.",
+    "_postman_id": "a7b8c9d0-zeroix-api-2026",
+    "name": "ZeroixApi 1.0.0 — Endpoint Collection",
+    "description": "Koleksi resmi ZeroixApi. Satu API untuk semua project.\n\n1. Duplikat environment atau ubah variabel collection.\n2. Set baseUrl ke URL server kamu.\n3. Set apiKey ke API key dari dashboard, atau gunakan FreeLimit untuk demo.\n\nSemua respons memakai envelope { status, code, message, data, meta }.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
@@ -563,7 +563,7 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/tools/base64?text=Halo%20NusaAPI",
+              "raw": "{{baseUrl}}/api/tools/base64?text=Halo%20ZeroixApi",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -575,7 +575,7 @@
               "query": [
                 {
                   "key": "text",
-                  "value": "Halo NusaAPI"
+                  "value": "Halo ZeroixApi"
                 }
               ]
             },
@@ -681,7 +681,7 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/maker/qr?text=https%3A%2F%2Fnusaapi.local",
+              "raw": "{{baseUrl}}/api/maker/qr?text=https%3A%2F%2Fzeroixapi.local",
               "host": [
                 "{{baseUrl}}"
               ],
@@ -693,7 +693,7 @@
               "query": [
                 {
                   "key": "text",
-                  "value": "https://nusaapi.local"
+                  "value": "https://zeroixapi.local"
                 }
               ]
             },

@@ -1,4 +1,4 @@
-/* NusaAPI — landing page interactions */
+/* ZeroixApi — landing page interactions */
 (function () {
   'use strict';
 
@@ -22,17 +22,17 @@
     var base = window.location.origin;
     var examples = [
       {
-        command: 'curl "' + base + '/api/tools/weather?city=Jakarta" \\\n  -H "Authorization: Bearer nusa_••••••••"',
+        command: 'curl "' + base + '/api/tools/weather?city=Jakarta" \\\n  -H "Authorization: Bearer zeroix_••••••••"',
         status: '200 OK',
         response: '{\n  "status": true,\n  "data": {\n    "city": "Jakarta",\n    "temperature": 31.2,\n    "condition": "Cerah berawan"\n  }\n}'
       },
       {
-        command: 'curl "' + base + '/api/tools/qr?text=NusaAPI" \\\n  -H "Authorization: Bearer nusa_••••••••"',
+        command: 'curl "' + base + '/api/tools/qr?text=ZeroixApi" \\\n  -H "Authorization: Bearer zeroix_••••••••"',
         status: '200 OK',
         response: '{\n  "status": true,\n  "data": {\n    "format": "png",\n    "size": 512,\n    "url": "/api/tools/qr?... "\n  }\n}'
       },
       {
-        command: 'curl "' + base + '/api/tools/uuid?count=3" \\\n  -H "Authorization: Bearer nusa_••••••••"',
+        command: 'curl "' + base + '/api/tools/uuid?count=3" \\\n  -H "Authorization: Bearer zeroix_••••••••"',
         status: '200 OK',
         response: '{\n  "status": true,\n  "data": {\n    "uuids": [\n      "e4f1…", "9ab2…", "71cd…"\n    ]\n  }\n}'
       }

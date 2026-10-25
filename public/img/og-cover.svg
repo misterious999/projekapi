@@ -20,8 +20,8 @@
   <circle cx="180" cy="140" r="160" fill="#38e8ff" opacity=".12" filter="url(#glow)"/>
   <circle cx="1040" cy="500" r="180" fill="#a855f7" opacity=".14" filter="url(#glow)"/>
   <rect x="70" y="62" width="74" height="74" rx="20" fill="url(#accent)"/>
-  <path d="M93 114V84l28 30V84" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
-  <text x="164" y="114" fill="#fff" font-family="Plus Jakarta Sans, Arial, sans-serif" font-size="38" font-weight="700">Nusa<tspan fill="#9bb8ff">API</tspan></text>
+  <path d="M93 84h28L93 114h28" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="164" y="114" fill="#fff" font-family="Plus Jakarta Sans, Arial, sans-serif" font-size="38" font-weight="700">Zeroix<tspan fill="#9bb8ff">Api</tspan></text>
   <text x="70" y="292" fill="url(#text)" font-family="Plus Jakarta Sans, Arial, sans-serif" font-size="76" font-weight="800">Satu API untuk</text>
   <text x="70" y="380" fill="url(#accent)" font-family="Plus Jakarta Sans, Arial, sans-serif" font-size="76" font-weight="800">semua project.</text>
   <text x="74" y="446" fill="#93a4c3" font-family="Plus Jakarta Sans, Arial, sans-serif" font-size="27">REST API publik · dokumentasi lengkap · kuota transparan · monitoring live</text>

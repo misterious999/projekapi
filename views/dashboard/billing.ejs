@@ -1,4 +1,4 @@
-<%- include('../partials/dash-start', { title, description: 'Paket, kuota, dan riwayat transaksi NusaAPI.', active, user, planData, quota, settings, announcement }) %>
+<%- include('../partials/dash-start', { title, description: 'Paket, kuota, dan riwayat transaksi ZeroixApi.', active, user, planData, quota, settings, announcement }) %>
 
 <div class="dash-page-head">
   <div>
@@ -72,7 +72,7 @@
       <input type="hidden" name="_csrf" value="<%= csrf %>">
       <label class="field">
         <span>Kode redeem</span>
-        <input type="text" name="code" maxlength="40" placeholder="Contoh: NUSA2026" autocomplete="off" autocapitalize="characters" spellcheck="false" required>
+        <input type="text" name="code" maxlength="40" placeholder="Contoh: ZEROIX2026" autocomplete="off" autocapitalize="characters" spellcheck="false" required>
         <small class="field-hint">Kode tidak peka huruf besar/kecil. Setiap kode hanya bisa dipakai sekali per akun.</small>
       </label>
       <button class="btn btn-primary" type="submit"><i data-lucide="sparkles"></i> Tukar kode</button>

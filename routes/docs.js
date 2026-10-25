@@ -100,7 +100,7 @@ router.get('/:id', (req, res) => {
 });
 
 function storeKeyMask(user) {
-  return user.apiKeyLast4 ? `nusa_••••••••••••${user.apiKeyLast4}` : 'Belum ada API key';
+  return user.apiKeyLast4 ? `zeroix_••••••••••••${user.apiKeyLast4}` : 'Belum ada API key';
 }
 
 module.exports = router;

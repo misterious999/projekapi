@@ -26,7 +26,7 @@ router.get('/login', requireGuest, async (req, res, next) => {
     const settings = await store.getSettings();
     res.render('login', {
       title: `Masuk — ${app.name}`,
-      description: 'Masuk ke dashboard API NusaAPI.',
+      description: 'Masuk ke dashboard API ZeroixApi.',
       bodyClass: 'page-auth',
       settings,
       next: safeNext(req.query.next || '', '/dashboard'),
@@ -176,7 +176,7 @@ router.get('/forgot-password', requireGuest, async (req, res, next) => {
     const settings = await store.getSettings();
     res.render('forgot', {
       title: `Lupa Password — ${app.name}`,
-      description: 'Panduan reset password akun NusaAPI.',
+      description: 'Panduan reset password akun ZeroixApi.',
       bodyClass: 'page-auth',
       settings,
     });

@@ -259,19 +259,19 @@ async function qrCode(input) {
 
 const QUOTES = {
   motivasi: [
-    { quote: 'Mulai dari yang kecil, konsisten, lalu biarkan hasilnya bicara.', author: 'NusaAPI' },
-    { quote: 'Yang sulit bukan memulai, tapi bertahan saat hasilnya belum terlihat.', author: 'NusaAPI' },
-    { quote: 'Satu langkah hari ini lebih baik daripada rencana besar yang tidak pernah dijalankan.', author: 'NusaAPI' },
+    { quote: 'Mulai dari yang kecil, konsisten, lalu biarkan hasilnya bicara.', author: 'ZeroixApi' },
+    { quote: 'Yang sulit bukan memulai, tapi bertahan saat hasilnya belum terlihat.', author: 'ZeroixApi' },
+    { quote: 'Satu langkah hari ini lebih baik daripada rencana besar yang tidak pernah dijalankan.', author: 'ZeroixApi' },
   ],
   teknologi: [
-    { quote: 'Sistem yang baik membuat hal sulit terasa biasa.', author: 'NusaAPI' },
-    { quote: 'Kode yang jelas lebih berharga daripada kode yang terlihat pintar.', author: 'NusaAPI' },
-    { quote: 'Otomatiskan yang berulang, pikirkan yang penting.', author: 'NusaAPI' },
+    { quote: 'Sistem yang baik membuat hal sulit terasa biasa.', author: 'ZeroixApi' },
+    { quote: 'Kode yang jelas lebih berharga daripada kode yang terlihat pintar.', author: 'ZeroixApi' },
+    { quote: 'Otomatiskan yang berulang, pikirkan yang penting.', author: 'ZeroixApi' },
   ],
   kehidupan: [
-    { quote: 'Tempat terbaik untuk memulai adalah tempat kamu sekarang.', author: 'NusaAPI' },
-    { quote: 'Berhenti membandingkan prosesmu dengan highlight orang lain.', author: 'NusaAPI' },
-    { quote: 'Istirahat bukan kemunduran, kadang itu cara paling sehat untuk maju.', author: 'NusaAPI' },
+    { quote: 'Tempat terbaik untuk memulai adalah tempat kamu sekarang.', author: 'ZeroixApi' },
+    { quote: 'Berhenti membandingkan prosesmu dengan highlight orang lain.', author: 'ZeroixApi' },
+    { quote: 'Istirahat bukan kemunduran, kadang itu cara paling sehat untuk maju.', author: 'ZeroixApi' },
   ],
 };
 

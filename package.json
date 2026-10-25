@@ -1,7 +1,7 @@
 {
-  "name": "nusaapi",
+  "name": "zeroixapi",
   "version": "1.0.0",
-  "description": "NusaAPI — platform API-key publik dengan dokumentasi, kuota, monitor, dashboard, dan admin.",
+  "description": "ZeroixApi — platform API-key publik dengan dokumentasi, kuota, monitor, dashboard, dan admin.",
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
@@ -14,9 +14,9 @@
     "api-key",
     "express",
     "firebase",
-    "nusaapi"
+    "zeroixapi"
   ],
-  "author": "NusaAPI",
+  "author": "ZeroixApi",
   "license": "UNLICENSED",
   "private": true,
   "type": "commonjs",

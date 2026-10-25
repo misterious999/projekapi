@@ -1,4 +1,4 @@
-/* NusaAPI — user dashboard */
+/* ZeroixApi — user dashboard */
 (function () {
   'use strict';
 
@@ -24,7 +24,7 @@
   }
 
   function refreshIcons() {
-    if (window.Nusa) window.Nusa.refreshIcons();
+    if (window.Zeroix) window.Zeroix.refreshIcons();
   }
 
   function shortDate(value) {
@@ -199,7 +199,7 @@
           reveal.setAttribute('aria-label', 'Sembunyikan API key');
         } catch (error) {
           reveal.innerHTML = original;
-          if (window.Nusa) window.Nusa.showToast(error.message, 'error');
+          if (window.Zeroix) window.Zeroix.showToast(error.message, 'error');
         } finally {
           reveal.disabled = false;
           refreshIcons();
@@ -215,17 +215,17 @@
         refreshIcons();
         try {
           var key = await fetchKey();
-          var ok = window.Nusa ? await window.Nusa.copyText(key) : false;
+          var ok = window.Zeroix ? await window.Zeroix.copyText(key) : false;
           if (!ok) throw new Error('Browser menolak akses clipboard.');
           copy.innerHTML = '<i data-lucide="check"></i> Tersalin';
-          if (window.Nusa) window.Nusa.showToast('API key disalin. Simpan di tempat aman.', 'success');
+          if (window.Zeroix) window.Zeroix.showToast('API key disalin. Simpan di tempat aman.', 'success');
           setTimeout(function () {
             copy.innerHTML = original;
             refreshIcons();
           }, 1800);
         } catch (error) {
           copy.innerHTML = original;
-          if (window.Nusa) window.Nusa.showToast(error.message, 'error');
+          if (window.Zeroix) window.Zeroix.showToast(error.message, 'error');
         } finally {
           copy.disabled = false;
           refreshIcons();

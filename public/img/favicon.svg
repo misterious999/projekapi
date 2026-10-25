@@ -8,5 +8,5 @@
   </defs>
   <rect width="64" height="64" rx="16" fill="#060a14"/>
   <rect x="4" y="4" width="56" height="56" rx="15" fill="url(#g)"/>
-  <path d="M21 45V19l22 26V19" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M21 19h22L21 45h22" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>

@@ -1,4 +1,4 @@
-/* NusaAPI — documentation, code examples, and in-browser tester */
+/* ZeroixApi — documentation, code examples, and in-browser tester */
 (function () {
   'use strict';
 
@@ -251,7 +251,7 @@
       detail.hidden = false;
       detail.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
-    if (window.Nusa) window.Nusa.refreshIcons();
+    if (window.Zeroix) window.Zeroix.refreshIcons();
     try {
       history.replaceState(null, '', '#ep-' + endpoint.id);
     } catch (error) {
@@ -293,7 +293,7 @@
     var key = testerKey ? testerKey.value.trim() : '';
     state.key = key;
     if (!endpoint.public && !key) {
-      if (window.Nusa) window.Nusa.showToast('API key wajib diisi. Gunakan key akun atau FreeLimit.', 'error');
+      if (window.Zeroix) window.Zeroix.showToast('API key wajib diisi. Gunakan key akun atau FreeLimit.', 'error');
       if (testerKey) testerKey.focus();
       return;
     }
@@ -341,7 +341,7 @@
     if (button) {
       button.disabled = true;
       button.innerHTML = '<i data-lucide="loader-circle"></i> Mengirim...';
-      if (window.Nusa) window.Nusa.refreshIcons();
+      if (window.Zeroix) window.Zeroix.refreshIcons();
     }
     if (testerResult) testerResult.hidden = true;
 
@@ -375,7 +375,7 @@
       if (button) {
         button.disabled = false;
         button.innerHTML = '<i data-lucide="play"></i> Kirim request';
-        if (window.Nusa) window.Nusa.refreshIcons();
+        if (window.Zeroix) window.Zeroix.refreshIcons();
       }
     }
   }
@@ -397,9 +397,9 @@
         if (!response.ok || !data.key) throw new Error(data.message || 'Gagal mengambil API key.');
         if (testerKey) testerKey.value = data.key;
         state.key = data.key;
-        if (window.Nusa) window.Nusa.showToast('API key akun dipakai di tester.', 'success');
+        if (window.Zeroix) window.Zeroix.showToast('API key akun dipakai di tester.', 'success');
       } catch (error) {
-        if (window.Nusa) window.Nusa.showToast(error.message, 'error');
+        if (window.Zeroix) window.Zeroix.showToast(error.message, 'error');
       } finally {
         button.disabled = false;
       }

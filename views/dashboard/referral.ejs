@@ -1,4 +1,4 @@
-<%- include('../partials/dash-start', { title, description: 'Kode referral dan bonus kuota NusaAPI.', active, user, planData, quota, settings, announcement }) %>
+<%- include('../partials/dash-start', { title, description: 'Kode referral dan bonus kuota ZeroixApi.', active, user, planData, quota, settings, announcement }) %>
 
 <div class="dash-page-head">
   <div>
@@ -44,9 +44,9 @@
       <div class="copy-field"><input type="text" value="<%= referral.link %>" readonly id="referralLink"><button type="button" class="btn btn-ghost btn-sm" data-copy="<%= referral.link %>"><i data-lucide="copy"></i> Copy</button></div>
     </label>
     <div class="share-row">
-      <a class="btn btn-outline btn-sm" href="https://wa.me/?text=<%= encodeURIComponent('Coba NusaAPI — satu API untuk semua project. Daftar pakai kode referral ' + referral.code + ': ' + referral.link) %>" target="_blank" rel="noopener"><i data-lucide="message-circle"></i> WhatsApp</a>
-      <a class="btn btn-outline btn-sm" href="https://twitter.com/intent/tweet?text=<%= encodeURIComponent('Coba NusaAPI — satu API untuk semua project.') %>&url=<%= encodeURIComponent(referral.link) %>" target="_blank" rel="noopener"><i data-lucide="twitter"></i> X / Twitter</a>
-      <a class="btn btn-outline btn-sm" href="mailto:?subject=<%= encodeURIComponent('Coba NusaAPI') %>&body=<%= encodeURIComponent('Daftar NusaAPI dengan kode referral ' + referral.code + ': ' + referral.link) %>"><i data-lucide="mail"></i> Email</a>
+      <a class="btn btn-outline btn-sm" href="https://wa.me/?text=<%= encodeURIComponent('Coba ZeroixApi — satu API untuk semua project. Daftar pakai kode referral ' + referral.code + ': ' + referral.link) %>" target="_blank" rel="noopener"><i data-lucide="message-circle"></i> WhatsApp</a>
+      <a class="btn btn-outline btn-sm" href="https://twitter.com/intent/tweet?text=<%= encodeURIComponent('Coba ZeroixApi — satu API untuk semua project.') %>&url=<%= encodeURIComponent(referral.link) %>" target="_blank" rel="noopener"><i data-lucide="twitter"></i> X / Twitter</a>
+      <a class="btn btn-outline btn-sm" href="mailto:?subject=<%= encodeURIComponent('Coba ZeroixApi') %>&body=<%= encodeURIComponent('Daftar ZeroixApi dengan kode referral ' + referral.code + ': ' + referral.link) %>"><i data-lucide="mail"></i> Email</a>
     </div>
     <div class="billing-note"><i data-lucide="info"></i><p>Bonus otomatis ditambahkan saat teman mendaftar memakai link atau kode kamu. Satu akun hanya bisa memakai satu kode referral.</p></div>
   </section>

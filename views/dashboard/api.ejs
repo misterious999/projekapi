@@ -1,4 +1,4 @@
-<%- include('../partials/dash-start', { title, description: 'Kelola API key, kuota, dan whitelist IP NusaAPI.', active, user, planData, quota, settings, announcement }) %>
+<%- include('../partials/dash-start', { title, description: 'Kelola API key, kuota, dan whitelist IP ZeroixApi.', active, user, planData, quota, settings, announcement }) %>
 
 <div class="dash-page-head">
   <div>
@@ -78,13 +78,13 @@
 
     <div class="custom-key-block">
       <div class="custom-key-head">
-        <div><h3>Custom API key</h3><p>Pakai key yang mudah diingat, misalnya <code>nusa_project_rahasia</code>.</p></div>
+        <div><h3>Custom API key</h3><p>Pakai key yang mudah diingat, misalnya <code>zeroix_project_rahasia</code>.</p></div>
         <% if (!planData.customKey && user.role !== 'admin') { %><span class="badge badge-amber">Plus+</span><% } else { %><span class="badge badge-green">Tersedia</span><% } %>
       </div>
       <% if (planData.customKey || user.role === 'admin') { %>
         <form method="post" action="/dashboard/api/custom" class="inline-form">
           <input type="hidden" name="_csrf" value="<%= csrf %>">
-          <input type="text" name="customKey" minlength="12" maxlength="80" placeholder="nusa_project_rahasia" required>
+          <input type="text" name="customKey" minlength="12" maxlength="80" placeholder="zeroix_project_rahasia" required>
           <button class="btn btn-outline btn-sm" type="submit">Simpan custom key</button>
         </form>
         <small class="field-hint">Minimal 12 karakter, hanya huruf, angka, titik, garis bawah, dan strip. Key lama akan diganti.</small>

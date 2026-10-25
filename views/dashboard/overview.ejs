@@ -1,4 +1,4 @@
-<%- include('../partials/dash-start', { title, description: 'Ringkasan akun, kuota, pemakaian API, dan transaksi NusaAPI.', active, user, planData, quota, settings, announcement }) %>
+<%- include('../partials/dash-start', { title, description: 'Ringkasan akun, kuota, pemakaian API, dan transaksi ZeroixApi.', active, user, planData, quota, settings, announcement }) %>
 
 <div class="dash-page-head">
   <div>
@@ -150,7 +150,7 @@
       <div class="checklist-item is-done"><i data-lucide="check-circle-2"></i><div><b>Buat akun</b><small>Akun aktif sejak <%= formatDate(user.createdAt) %></small></div></div>
       <div class="checklist-item is-done"><i data-lucide="check-circle-2"></i><div><b>API key dibuat</b><small>Key siap dipakai di dashboard API.</small></div></div>
       <a class="checklist-item <%= recentRequests.length ? 'is-done' : '' %>" href="/docs"><i data-lucide="<%= recentRequests.length ? 'check-circle-2' : 'circle' %>"></i><div><b>Panggil endpoint pertama</b><small>Gunakan tester dokumentasi atau cURL.</small></div><i data-lucide="arrow-right"></i></a>
-      <a class="checklist-item <%= testimonial ? 'is-done' : '' %>" href="/dashboard/testimonial"><i data-lucide="<%= testimonial ? 'check-circle-2' : 'circle' %>"></i><div><b>Bagikan testimoni</b><small>Bantu developer lain menemukan NusaAPI.</small></div><i data-lucide="arrow-right"></i></a>
+      <a class="checklist-item <%= testimonial ? 'is-done' : '' %>" href="/dashboard/testimonial"><i data-lucide="<%= testimonial ? 'check-circle-2' : 'circle' %>"></i><div><b>Bagikan testimoni</b><small>Bantu developer lain menemukan ZeroixApi.</small></div><i data-lucide="arrow-right"></i></a>
     </div>
   </section>
 <% } %>

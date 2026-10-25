@@ -37,15 +37,15 @@
             <code>/api/ai/chat?q=Halo</code>
             <span class="method-pill">GET</span>
           </div>
-          <pre class="terminal-body"><code><span class="t-muted">$</span> <span data-terminal-command>curl "https://api.nusaapi.local/api/ai/chat?q=Halo" \
-  -H "Authorization: Bearer nusa_••••••••"</span><span class="t-caret"></span>
+          <pre class="terminal-body"><code><span class="t-muted">$</span> <span data-terminal-command>curl "https://api.zeroixapi.local/api/ai/chat?q=Halo" \
+  -H "Authorization: Bearer zeroix_••••••••"</span><span class="t-caret"></span>
 
 <span class="t-ok" data-terminal-status>200 OK</span>
 <span class="t-json" data-terminal-response>{
   "status": true,
   "data": {
     "answer": "Halo! Ada yang bisa dibantu?",
-    "model": "nusa-fast"
+    "model": "zeroix-fast"
   }
 }</span></code></pre>
           <div class="terminal-foot">
@@ -96,7 +96,7 @@
     <div class="container">
       <div class="section-head">
         <div>
-          <span class="eyebrow">KENAPA NUSAAPI</span>
+          <span class="eyebrow">KENAPA ZEROIXAPI</span>
           <h2>API key, kuota, dan dokumentasi<br>yang rapi sejak request pertama.</h2>
         </div>
         <p>Bukan sekadar kumpulan endpoint. Semua yang dibutuhkan untuk mengelola API publik ada di satu tempat.</p>
@@ -274,7 +274,7 @@
       <div class="section-head">
         <div>
           <span class="eyebrow">APLIKASI</span>
-          <h2>Bawa NusaAPI ke workflow kamu.</h2>
+          <h2>Bawa ZeroixApi ke workflow kamu.</h2>
         </div>
         <p>Koleksi Postman dan CLI kecil untuk mulai lebih cepat.</p>
       </div>
@@ -329,7 +329,7 @@
             <div class="empty-state glass-card testimonial-empty">
               <i data-lucide="message-square-quote"></i>
               <h3>Jadi yang pertama</h3>
-              <p>Belum ada testimoni. Bagikan pengalamanmu memakai NusaAPI.</p>
+              <p>Belum ada testimoni. Bagikan pengalamanmu memakai ZeroixApi.</p>
             </div>
           <% } %>
         </div>
@@ -349,7 +349,7 @@
               </div>
               <label class="field">
                 <span>Testimoni</span>
-                <textarea name="content" rows="5" maxlength="800" minlength="10" placeholder="Ceritakan pengalamanmu memakai NusaAPI..." required><%= myTestimonial ? myTestimonial.content : '' %></textarea>
+                <textarea name="content" rows="5" maxlength="800" minlength="10" placeholder="Ceritakan pengalamanmu memakai ZeroixApi..." required><%= myTestimonial ? myTestimonial.content : '' %></textarea>
               </label>
               <button class="btn btn-primary btn-block" type="submit"><i data-lucide="send"></i> <%= myTestimonial ? 'Perbarui testimoni' : 'Kirim testimoni' %></button>
             </form>

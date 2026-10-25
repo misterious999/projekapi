@@ -1,4 +1,4 @@
-/* NusaAPI — global interactions */
+/* ZeroixApi — global interactions */
 (function () {
   'use strict';
 
@@ -153,7 +153,7 @@
 
   function bindAnnouncements() {
     $$('[data-announcement]').forEach(function (bar) {
-      var key = 'nusa-announcement-' + (bar.getAttribute('data-announcement-key') || 'default');
+      var key = 'zeroix-announcement-' + (bar.getAttribute('data-announcement-key') || 'default');
       try {
         if (window.localStorage && localStorage.getItem(key) === 'closed') {
           bar.hidden = true;
@@ -325,7 +325,7 @@
     bindConfirmForms();
     bindCountdowns();
     bindMisc();
-    window.Nusa = {
+    window.Zeroix = {
       refreshIcons: refreshIcons,
       copyText: copyText,
       showToast: showToast

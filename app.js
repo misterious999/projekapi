@@ -101,7 +101,7 @@ const sessionStore = new FirebaseSessionStore({
 
 app.use(
   session({
-    name: 'nusa.sid',
+    name: 'zeroix.sid',
     secret: config.sessionSecret,
     store: sessionStore,
     resave: false,

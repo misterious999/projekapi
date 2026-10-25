@@ -11,4 +11,4 @@ _legacy
 .gitignore
 logs
 *.log
-public/downloads/nusaapi-postman.json.tmp
+public/downloads/zeroixapi-postman.json.tmp

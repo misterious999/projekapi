@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="NusaAPI">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="ZeroixApi">
   <defs>
     <linearGradient id="g" x1="8" y1="4" x2="58" y2="62" gradientUnits="userSpaceOnUse">
       <stop offset="0" stop-color="#38e8ff"/>
@@ -12,7 +12,7 @@
   </defs>
   <rect width="64" height="64" rx="18" fill="url(#g)"/>
   <rect x="1" y="1" width="62" height="62" rx="17" fill="none" stroke="#ffffff" stroke-opacity=".18"/>
-  <path d="M20 45V19l24 26V19" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M20 19h24L20 45h24" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
   <circle cx="50" cy="14" r="4" fill="#fff"/>
   <path d="M8 50c14 4 33 1 47-12" fill="none" stroke="url(#shine)" stroke-width="2" stroke-linecap="round"/>
 </svg>

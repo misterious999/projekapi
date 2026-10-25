@@ -1,4 +1,4 @@
-# NusaAPI — contoh reverse proxy Nginx
+# ZeroixApi — contoh reverse proxy Nginx
 # Ganti api.example.com dan path certificate sebelum dipakai.
 
 server {

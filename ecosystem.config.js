@@ -3,7 +3,7 @@
 module.exports = {
   apps: [
     {
-      name: 'nusaapi',
+      name: 'zeroixapi',
       script: 'app.js',
       cwd: __dirname,
       instances: 1,
@@ -15,8 +15,8 @@ module.exports = {
       env: {
         NODE_ENV: 'production',
       },
-      error_file: 'logs/nusaapi-error.log',
-      out_file: 'logs/nusaapi-out.log',
+      error_file: 'logs/zeroixapi-error.log',
+      out_file: 'logs/zeroixapi-out.log',
       merge_logs: true,
     },
   ],
